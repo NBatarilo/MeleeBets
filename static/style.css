@@ -1,0 +1,12 @@
+.topright {
+    position: absolute;
+    top: 64px;
+    right: 16px;
+    font-size: 18px;
+}
+
+.cardrows {
+    position: relative;
+    width : 1500px;
+    left: 16px;
+}
