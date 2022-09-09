@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
+import { take } from 'rxjs/operators';
 import {UsersApiService} from './users/users-api.service';
 import {User} from './users/user.model';
 
@@ -10,8 +11,8 @@ import {User} from './users/user.model';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'app';
-  usersListSubs: Subscription;
-  usersList: User[];
+  usersListSubs?: Subscription;
+  usersList?: User[];
 
   constructor(private usersApi: UsersApiService) {
   }
@@ -20,14 +21,15 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.usersListSubs = this.usersApi
       .getUsers()
-      .subscribe({
-        next: res => {this.usersList = res;},
-        error: console.error
-      }
+      .pipe(take(1))
+      .subscribe(
+        res => {this.usersList = res;},
       );
   }
 
   ngOnDestroy() {
-    this.usersListSubs.unsubscribe();
+    if(this.usersListSubs){
+      this.usersListSubs.unsubscribe();
+    }
   }
 }
