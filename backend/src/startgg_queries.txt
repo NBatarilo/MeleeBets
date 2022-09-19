@@ -1,0 +1,120 @@
+#Placeholder for backend graphQL queries and posting to database. 
+
+#SECRET TOKEN: 3b70dc3e655754d9010c3ea829e81cd8
+#VERY BAD PRACTICE, DELETE BEFORE MAKING PUBLIC
+1205675
+#Show standings of both players
+query EventSets {
+  event(slug:"tournament/riptide-2022/event/melee-singles") {
+    sets(perPage:30 page:1) {
+      pageInfo {
+        totalPages
+      }
+      nodes {
+        slots {
+          standing {
+            entrant {
+              name
+            }
+            stats {
+              score {
+                value
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#Display Score post game
+query EventSets {
+  event(slug:"tournament/riptide-2022/event/melee-singles") {
+    sets(perPage:30 page:1) {
+      pageInfo {
+        totalPages
+      }
+      nodes {
+        displayScore
+        slots {
+          entrant {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
+#Java code for using graphql queries
+OkHttpClient client = new OkHttpClient();
+MediaType mediaType = MediaType.parse("application/json");
+ObjectMapper mapper = new ObjectMapper();
+String query = mapper.writeValueAsString(<your query here>);
+
+RequestBody body = RequestBody.create(query, mediaType);
+Request request = new Request.Builder()
+     .url("https://api.smash.gg/gql/alpha")
+     .post(body)
+     .addHeader("authorization", "Bearer " + <your key here>)
+     .build();
+
+Response response = client.newCall(request).execute();
+String json = response.body().string();
+
+
+query PhaseSets {
+  phase(id: 1205675) {
+    id
+    name
+    sets(
+      page: 1
+      perPage: 30
+      sortType: STANDARD
+    ){
+      pageInfo {
+        total
+      }
+      nodes {
+        id
+        slots {
+          id
+          entrant {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
+query EventSets {
+  event(slug: "tournament/the-cave-angie-s-9-14/event/melee-singles") {
+    id
+    name
+    phases {
+      id
+    }
+    sets(
+      page: 1
+      perPage: 30
+      sortType: STANDARD
+    ) {
+      pageInfo {
+        total
+      }
+      nodes {
+        id
+        slots {
+          id
+          entrant {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
