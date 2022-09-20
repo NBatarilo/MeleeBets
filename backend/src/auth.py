@@ -2,10 +2,10 @@ import json
 from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
-from urllib.request import urlopen
+from six.moves.urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'https://dev-2a6p9-1k.us.auth0.com/'
+AUTH0_DOMAIN = 'dev-2a6p9-1k.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'https://meleebets-login.com.us'
 
