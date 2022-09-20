@@ -1,11 +1,12 @@
 # coding=utf-8
 
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from .entities.entity import Session, engine, Base
 from .entities.user import User, UserSchema
 from .entities.match import Match, MatchSchema
 from .entities.bet import Bet, BetSchema
+from .auth import AuthError, requires_auth
 
 # creating the Flask application
 app = Flask(__name__)
@@ -31,6 +32,7 @@ def get_users():
 
 
 @app.route('/users', methods=['POST'])
+@requires_auth
 def add_user():
     # mount user object
     posted_user = UserSchema(only=('name', 'password'))\
@@ -48,7 +50,11 @@ def add_user():
     session.close()
     return jsonify(new_user), 201
 
-
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
 
 @app.route('/matches')
 def get_matches():
@@ -64,7 +70,8 @@ def get_matches():
     session.close()
     return jsonify(matches)
 
-
+#Is this the best way to do this? Maybe remove POST method entirely and move further to back end
+#Need to add authentication if it stays
 @app.route('/matches', methods=['POST'])
 def add_matches():
     
@@ -104,6 +111,7 @@ def get_bets():
 
 
 @app.route('/bets', methods=['POST'])
+@requires_auth
 def add_bet():
    
     posted_bet = BetSchema(only=('bettor_userid', 'bettor_username', 'odds', 'amount'))\
@@ -121,3 +129,10 @@ def add_bet():
     new_bet = BetSchema().dump(bet)
     session.close()
     return jsonify(new_bet), 201
+
+#Is this necessary again?
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
