@@ -5,6 +5,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {AppComponent} from './app.component';
 import {UsersApiService} from './users/users-api.service';
 import { MatchesComponent } from './matches/matches.component';
+import { BetsApiService } from './bets/bets-api.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,7 @@ import { MatchesComponent } from './matches/matches.component';
     BrowserModule,
     HttpClientModule,
   ],
-  providers: [UsersApiService],
+  providers: [UsersApiService, BetsApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
