@@ -15,7 +15,7 @@ export class BetsApiService {
     return throwError(() => err);
   }
 
-  // GET list of users
+  // GET list of bets
   getBets(): Observable<Bet[]> {
     return this.http
       .get<Bet[]>(`${API_URL}/bets`)
