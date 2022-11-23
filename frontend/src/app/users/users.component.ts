@@ -12,14 +12,14 @@ import {User} from './user.model';
         <button routerLink="/new-user">New User</button>
         <ul>
           <li *ngFor="let user of usersList">
-            {{user.name, user.password}}
+            {{user.name}}, {{user.password}}
           </li>
         </ul>
       </div>
     `
   })
 
-  export class Users implements OnInit, OnDestroy {
+  export class UsersComponent implements OnInit, OnDestroy {
   
     usersListSubs?: Subscription;
     usersList?: User[]; 

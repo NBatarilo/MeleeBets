@@ -21,4 +21,9 @@ export class UsersApiService {
       .get<User[]>(`${API_URL}/users`)
       .pipe(catchError(UsersApiService._handleError));
   }
+
+  createAccount(user: User): Observable<any> {
+    return this.http
+      .post(`${API_URL}/users`, user)
+  }
 }

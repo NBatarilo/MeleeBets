@@ -30,13 +30,13 @@ export class UserFormComponent {
         this.user.name = event.target.value;
     }
 
-    updateDescription(event: any) {
+    updatePassword(event: any) {
         this.user.password = event.target.value;
     }
 
     createAccount(){
         this.usersApi
-            .createAccount()
+            .createAccount(this.user)
             .pipe(take(1))
             .subscribe(
                 () => this.router.navigate(['/']),
