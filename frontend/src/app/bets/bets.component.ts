@@ -12,7 +12,7 @@ import {Bet} from './bet.model';
     <button routerLink="/new-bet">New Bet</button>
     <ul>
       <li *ngFor="let bet of betsList">
-        {{bet.bettor_username, bet.amount}}
+        {{bet.bettor_username}}, {{bet.amount}}
       </li>
     </ul>
   </div>

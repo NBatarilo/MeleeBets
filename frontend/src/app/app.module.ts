@@ -11,6 +11,7 @@ import {UsersComponent} from './users/users.component';
 import {CommonModule} from '@angular/common';
 import { OverviewComponent, OverviewModule } from 'projects/overview/src/public-api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NavbarComponent } from './navabr/navbar.component';  
 
 const appRoutes: Routes = [
   { path: 'overview', component: OverviewComponent},
@@ -28,6 +29,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     CommonModule,
     OverviewModule,
+    NavbarComponent,
     RouterModule.forRoot(
       appRoutes,
     ),
