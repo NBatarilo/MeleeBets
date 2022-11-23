@@ -8,6 +8,7 @@ import { BetsApiService } from './bets/bets-api.service';
 import {UserFormComponent} from './users/user-form.component';
 import {RouterModule, Routes} from '@angular/router';
 import {UsersComponent} from './users/users.component';
+import {CommonModule} from '@angular/common';
 
 const appRoutes: Routes = [
   { path: 'new-user', component: UserFormComponent },
@@ -22,6 +23,7 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     HttpClientModule,
+    CommonModule,
     RouterModule.forRoot(
       appRoutes,
     ),  
