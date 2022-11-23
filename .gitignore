@@ -2,3 +2,5 @@
 .vscode/
 __pycache__/
 .gitignore
+node_modules
+.angular
