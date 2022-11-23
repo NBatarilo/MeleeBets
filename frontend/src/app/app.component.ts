@@ -5,9 +5,11 @@ import {UsersApiService} from './users/users-api.service';
 import {User} from './users/user.model';
 
 
+
 @Component({
   selector: 'app-root',
   template: `
+    <navbar> </navbar>
     <div style="text-align:center">
       <h1>Users</h1>
     </div>
