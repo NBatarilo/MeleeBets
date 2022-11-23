@@ -16,4 +16,4 @@ import {Router} from "@angular/router";
         <button (click)="saveExam()">Save Exam</button>
       </div>
     `
-  })
+})
