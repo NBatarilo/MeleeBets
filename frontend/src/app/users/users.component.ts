@@ -3,10 +3,16 @@ import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
 import {UsersApiService} from './users-api.service';
 import {User} from './user.model';
-
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
+    standalone: true,
     selector: 'users',
+    imports: [
+      CommonModule,
+      RouterModule
+    ],
     template: `
       <div>
         <button routerLink="/new-user">New User</button>
