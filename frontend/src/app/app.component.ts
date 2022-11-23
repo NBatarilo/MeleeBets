@@ -3,16 +3,15 @@ import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
 import {UsersApiService} from './users/users-api.service';
 import {User} from './users/user.model';
-import {BetsApiService} from './bets/bets-api.service';
-import {Bet} from './bets/bet.model';
+
 
 @Component({
   selector: 'app-root',
   template: `
     <div style="text-align:center">
-      <h1>Bets</h1>
+      <h1>Users</h1>
     </div>
-    <h2>Here are the bets created so far: </h2>
+    <h2>Here are the users created so far: </h2>
     <router-outlet></router-outlet>
   `,
   styleUrls: ['./app.component.css']
@@ -20,41 +19,27 @@ import {Bet} from './bets/bet.model';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'app';
 
-  /* usersListSubs?: Subscription;
-  usersList?: User[]; */
+  usersListSubs?: Subscription;
+  usersList?: User[]; 
 
-  betsListSubs?: Subscription;
-  betsList?: Bet[];
-
-  /* constructor(private usersApi: UsersApiService) {
-  } */
   
-  constructor(private betsApi: BetsApiService) {
-  }
+
+   constructor(private usersApi: UsersApiService) {
+  } 
+  
   
   ngOnInit() {
-    /* this.usersListSubs = this.usersApi
+    this.usersListSubs = this.usersApi
       .getUsers()
       .pipe(take(1))
       .subscribe(
         user_res => {this.usersList = user_res;},
-      ); */
-
-      this.betsListSubs = this.betsApi
-      .getBets()
-      .pipe(take(1))
-      .subscribe(
-        bet_res => {this.betsList = bet_res;},
-      );
+      ); 
   }
 
   ngOnDestroy() {
-    /* if(this.usersListSubs){
+    if(this.usersListSubs){
       this.usersListSubs.unsubscribe();
-    } */
-
-    if(this.betsListSubs){
-      this.betsListSubs.unsubscribe();
-    }
+    } 
   }
 }
