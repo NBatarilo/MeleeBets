@@ -3,10 +3,10 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {API_URL} from '../env';
-import {User} from './user.model';
+import {Bet} from './bet.model';
 
 @Injectable()
-export class UsersApiService {
+export class BetsApiService {
 
   constructor(private http: HttpClient) {
   }
@@ -15,15 +15,10 @@ export class UsersApiService {
     return throwError(() => err);
   }
 
-  // GET list of users
-  getUsers(): Observable<User[]> {
+  // GET list of bets
+  getBets(): Observable<Bet[]> {
     return this.http
-      .get<User[]>(`${API_URL}/users`)
-      .pipe(catchError(UsersApiService._handleError));
-  }
-
-  createAccount(user: User): Observable<any> {
-    return this.http
-      .post(`${API_URL}/users`, user)
+      .get<Bet[]>(`${API_URL}/bets`)
+      .pipe(catchError(BetsApiService._handleError));
   }
 }
