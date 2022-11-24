@@ -12,17 +12,19 @@ import {CommonModule} from '@angular/common';
 import { OverviewComponent, OverviewModule } from 'projects/overview/src/public-api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './navabr/navbar.component';  
+import {BetsComponent} from './bets/bets.component';
+import {BetFormComponent} from './bets/bet-form.component';
 
 const appRoutes: Routes = [
   { path: 'overview', component: OverviewComponent},
-  { path: 'new-user', component: UserFormComponent },
-  { path: '', component: UsersComponent },
+  { path: 'new-bet', component: BetFormComponent },
+  { path: '', component: BetsComponent },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    MatchesComponent
+    MatchesComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,3 +42,4 @@ const appRoutes: Routes = [
 })
 export class AppModule {
 }
+

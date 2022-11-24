@@ -1,11 +1,15 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
-
 import {BetsApiService} from './bets-api.service';
 import {Bet} from './bet.model';
+import { CommonModule } from '@angular/common';
+import {RouterModule} from "@angular/router";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, 
+  RouterModule],
   selector: 'app-root',
   template: `
   <div>
