@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
-import { BetsService } from '../bets.service';
+import { BetsService } from '../services/bets.service';
 
 import {Bet} from './bet.model';
 
