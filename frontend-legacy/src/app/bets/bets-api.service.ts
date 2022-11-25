@@ -21,4 +21,9 @@ export class BetsApiService {
       .get<Bet[]>(`${API_URL}/bets`)
       .pipe(catchError(BetsApiService._handleError));
   }
+
+  createBet(bet: Bet): Observable<any> {
+    return this.http
+      .post(`${API_URL}/bets`, bet);
+  }
 }
