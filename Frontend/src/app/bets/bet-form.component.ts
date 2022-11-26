@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BetsApiService} from "./bets.service";
+import {BetsService} from "../services/bets.service";
 import {Router} from "@angular/router";
 
 
