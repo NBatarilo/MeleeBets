@@ -2,22 +2,12 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
 import { BetsService } from '../services/bets.service';
-
 import {Bet} from './bet.model';
 
 @Component({
-  selector: 'app-root',
-  template: `
-  <div>
-    <button routerLink="/new-bet">New Bet</button>
-    <h1> Test </h1>
-    <ul>
-      <li *ngFor="let bet of betsList">
-        {{bet.bettor_username}}, {{bet.amount}}
-      </li>
-    </ul>
-  </div>
-`
+  selector: 'app-bets',
+  templateUrl: './bets.component.html',
+  
 })
 export class BetsComponent implements OnInit, OnDestroy {
 

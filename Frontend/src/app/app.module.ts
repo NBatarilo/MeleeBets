@@ -8,12 +8,14 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { RouterModule } from '@angular/router';
 import { UsersComponent } from './users/users.component';
 import { HttpClientModule } from '@angular/common/http';
+import { BetsComponent } from './bets/bets.component';
+import { BetsModule } from './bets/bets.module';
+import { UsersModule } from './users/users.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    UsersComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +23,9 @@ import { HttpClientModule } from '@angular/common/http';
     RouterModule,
     BrowserAnimationsModule,
     NavigationComponent,
-    HttpClientModule
+    HttpClientModule,
+    BetsModule,
+    UsersModule
   ],
   providers: [  ],
   bootstrap: [AppComponent]

@@ -3,9 +3,11 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {API_URL} from '../env';
-import {User} from './user.model';
+import {User} from '../users/user.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UsersService {
 
   constructor(private http: HttpClient) {

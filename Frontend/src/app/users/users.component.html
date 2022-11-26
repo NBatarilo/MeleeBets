@@ -1,1 +1,8 @@
-<p>users works!</p>
+<div>
+    <button routerLink="/new-user">New User</button>
+    <ul>
+      <li *ngFor="let user of usersList">
+        {{user.name}}, {{user.password}}
+      </li>
+    </ul>
+  </div>

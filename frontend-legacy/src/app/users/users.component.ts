@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
 import { take } from 'rxjs/operators';
-import {UsersApiService} from './users-api.service';
+import {UsersService} from './users-api.service';
 import {User} from './user.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -32,7 +32,7 @@ import { RouterModule } from '@angular/router';
   
     
   
-     constructor(private usersApi: UsersApiService) {
+     constructor(private usersApi: UsersService) {
     } 
     
     

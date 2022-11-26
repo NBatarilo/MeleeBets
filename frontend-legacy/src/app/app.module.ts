@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 import {AppComponent} from './app.component';
-import {UsersApiService} from './users/users-api.service';
+import {UsersService} from './users/users-api.service';
 import { MatchesComponent } from './matches/matches.component';
 import { BetsApiService } from './bets/bets-api.service';
 import {UserFormComponent} from './users/user-form.component';
@@ -37,7 +37,7 @@ const appRoutes: Routes = [
     ),
     BrowserAnimationsModule,  
   ],
-  providers: [UsersApiService, BetsApiService],
+  providers: [UsersService, BetsApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
