@@ -5,7 +5,7 @@
     <mat-nav-list>
       <a mat-list-item href="#">Overview</a>
       <a mat-list-item routerLink="bets">Bets</a>
-      <a mat-list-item href="users">Users</a>
+      <a mat-list-item routerLink="users">Users</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -19,6 +19,7 @@
       </button>
       <span>Melee Bets</span>
     </mat-toolbar>
+    <!-- Where the content lives -->
       <div class="container">
         <router-outlet></router-outlet>
       </div>
