@@ -1,4 +1,4 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" >
   <mat-sidenav #drawer class="sidenav" fixedInViewport
       [mode]="'side'">
     <mat-toolbar>Menu</mat-toolbar>
@@ -18,6 +18,24 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>Melee Bets</span>
+      <button
+        type="button"
+        mat-icon-button
+        (click)="login()"
+      >
+        Login
+      </button>
+      
+      <button
+        *ngIf="auth$ | async as auth"
+        mat-icon-button
+        (click)="logout()"
+      >
+      <div *ngIf="user$ | async as user">
+        {{user.email}}
+      </div>
+      
+      </button>
     </mat-toolbar>
     <!-- Where the content lives -->
       <div class="container">
