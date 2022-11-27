@@ -15,6 +15,15 @@ CORS(app)
 # if needed, generate database schema
 Base.metadata.create_all(engine)
 
+@app.route('/test')
+def get_test():
+    return jsonify('test endpoint')
+
+@app.route('/test-private')
+@requires_auth
+def get_test_private():
+    return jsonify('test endpoint behind')
+
 
 @app.route('/users')
 def get_users():
