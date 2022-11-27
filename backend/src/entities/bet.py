@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Float, Integer
+from sqlalchemy import Column, Float, String, Integer
 from .entity import Entity, Base
 from marshmallow import Schema, fields
 
@@ -8,31 +8,32 @@ from marshmallow import Schema, fields
 class Bet(Entity, Base):
     __tablename__ = 'bets'
 
-    bettor_userid = Column(String)
-    bettor_username = Column(String)
     odds = Column(Float)
-    amount = Column(Float)
-    outcome = Column(String)
-    payout = Column(Float)
+    bet_type = Column(String)
+    tournament_id = Column(Integer)
+    matchup_id = Column(Integer)
+    status = Column(String)
+    to_win = Column(Integer)
 
-    def __init__(self, bettor_userid, bettor_username, odds, amount, created_by):
+    def __init__(self, odds, bet_type, tournament_id, matchup_id, to_win, created_by):
         Entity.__init__(self, created_by)
-        self.bettor_userid = bettor_userid
-        self.bettor_username = bettor_username
         self.odds = odds
-        self.amount = amount
-        self.outcome = 'PENDING'
-        self.payout = -1
+        self.bet_type = bet_type
+        self.tournament_id = tournament_id
+        self.matchup_id = matchup_id
+        self.status = "open"
+        self.to_win = to_win
+
 
 
 class BetSchema(Schema):
     id = fields.Number()
-    bettor_userid = fields.Int()
-    bettor_username = fields.Str()
     odds = fields.Float()
-    amount = fields.Float()
-    outcome = fields.Str()
-    payout = fields.Float()
+    bet_type = fields.String()
+    tournament_id = fields.Number()
+    matchup_id = fields.Number()
+    status = fields.String()
+    to_win = fields.Number()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
     last_updated_by = fields.Str()
