@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from .entities.entity import Session, engine, Base
 from .entities.user import User, UserSchema
-from .entities.match import Match, MatchSchema
+from .entities.matchup import Match, MatchSchema
 from .entities.bet import Bet, BetSchema
 from .auth import AuthError, requires_auth
 
