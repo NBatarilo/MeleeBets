@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
 from .entity import Entity, Base
 from marshmallow import Schema, fields
 
@@ -8,8 +8,8 @@ from marshmallow import Schema, fields
 class TournamentMatch(Entity, Base):
     __tablename__ = 'tournament_matches'
 
-    tournament_id = Column(Integer)
-    matchup_id = Column(Integer)
+    tournament_id = Column(Integer, ForeignKey("tournaments.id"))
+    matchup_id = Column(Integer, ForeignKey("matchups.id"))
     round = Column(String)
     outcome = Column(Integer)
 

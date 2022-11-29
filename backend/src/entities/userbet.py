@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, Float, Integer
+from sqlalchemy import Column, Float, Integer, ForeignKey
 from .entity import Entity, Base
 from marshmallow import Schema, fields
 
@@ -8,8 +8,8 @@ from marshmallow import Schema, fields
 class UserBet(Entity, Base):
     __tablename__ = 'user_bets'
 
-    user_id = Column(Integer)
-    bet_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    bet_id = Column(Integer, ForeignKey("bets.id"))
     amount = Column(Float)
     payout = Column(Float)
     bet_result = Column(Integer)

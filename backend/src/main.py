@@ -4,8 +4,10 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from .entities.entity import Session, engine, Base
 from .entities.user import User, UserSchema
-from .entities.matchup import Match, MatchSchema
+from .entities.matchup import Matchup, MatchupSchema
 from .entities.bet import Bet, BetSchema
+from .entities.tournamentmatch import TournamentMatch, TournamentMatchSchema
+from sqlalchemy import select
 from .auth import AuthError, requires_auth
 
 # creating the Flask application
@@ -15,6 +17,17 @@ CORS(app)
 # if needed, generate database schema
 Base.metadata.create_all(engine)
 
+@app.route('/<tournament_slug>/matches')
+def get_tournament_matches(tournament_slug):
+    session = Session()
+    query = """
+    SELECT some_fields FROM TOURNAMENTS AS T
+    INNER JOIN TOURNAMENT_MATCHES AS TM ON T.ID = TM.TOURNAMENT_ID
+    INNER JOIN BETS AS B ON B.MATCHUP_ID = TM.MATCHUP_ID
+    WHERE T.TOURNAMENT_NAME = :slug
+    """
+    result = session.execute(query, slug = tournament_slug).fetchall() 
+    #tournament_match_objects = 
 
 @app.route('/users')
 def get_users():
