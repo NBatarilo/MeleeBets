@@ -5,7 +5,8 @@
 ### Docker
 
 - Install Docker from [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Run the following command on your local 
+- Start Docker
+- Run the following command on your local (git bash)
 ``` 
 docker run --name melee-bets \
     -p 5432:5432 \
@@ -18,6 +19,7 @@ docker run --name melee-bets \
 Ensure you have python installed with pip and venv modules installed globally
 - Create a virtual environment with `python3 -m venv [whatever your venv name]`
 - Then go into `bin/` and run `source activate` (on macOS)
+- CD into your enviornment and run `\Scripts\activate` (on Windows
 - CD into the `backend` folder and run `pip install -r requirements.txt`
 - To run the backend run `sh test.sh`
 
