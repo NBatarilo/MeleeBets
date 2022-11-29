@@ -6,10 +6,22 @@ from .entities.entity import Session, engine, Base
 from .entities.user import User, UserSchema
 from .entities.matchup import Matchup, MatchupSchema
 from .entities.bet import Bet, BetSchema
+from .entities.tournament import Tournament, TournamentSchema
 from .entities.tournamentmatch import TournamentMatch, TournamentMatchSchema
 from sqlalchemy import select
 from .auth import AuthError, requires_auth
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
+db_url = 'localhost:5432'
+db_name = 'melee-bets'
+db_user = 'postgres'
+db_password = 'secret'
+engine = create_engine(f'postgresql://{db_user}:{db_password}@{db_url}/{db_name}')
+Session = sessionmaker(bind=engine)
+
+Base = declarative_base()
 # creating the Flask application
 app = Flask(__name__)
 CORS(app)
@@ -17,19 +29,8 @@ CORS(app)
 # if needed, generate database schema
 Base.metadata.create_all(engine)
 
-<<<<<<< HEAD
-@app.route('/<tournament_slug>/matches')
-def get_tournament_matches(tournament_slug):
-    session = Session()
-    query = """
-    SELECT some_fields FROM TOURNAMENTS AS T
-    INNER JOIN TOURNAMENT_MATCHES AS TM ON T.ID = TM.TOURNAMENT_ID
-    INNER JOIN BETS AS B ON B.MATCHUP_ID = TM.MATCHUP_ID
-    WHERE T.TOURNAMENT_NAME = :slug
-    """
-    result = session.execute(query, slug = tournament_slug).fetchall() 
-    #tournament_match_objects = 
-=======
+
+
 @app.route('/test')
 def get_test():
     return jsonify('test endpoint')
@@ -39,7 +40,18 @@ def get_test():
 def get_test_private():
     return jsonify('test endpoint behind')
 
->>>>>>> 0600b7bcd287833a282490021df02522d1129c36
+@app.route('/<tournament_slug>/matches')
+def get_tournament_matches(tournament_slug):
+    session = Session()
+    query = """
+    SELECT some_fields FROM TOURNAMENTS AS T
+    INNER JOIN TOURNAMENT_MATCHES AS TM ON T.ID = TM.TOURNAMENT_ID
+    INNER JOIN BETS AS B ON B.MATCHUP_ID = TM.MATCHUP_ID
+    WHERE T.TOURNAMENT_NAME = :slug
+    """
+    stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
+    result = session.execute()
+    #tournament_match_objects = 
 
 @app.route('/users')
 def get_users():
