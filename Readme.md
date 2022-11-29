@@ -5,7 +5,8 @@
 ### Docker
 
 - Install Docker from [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Run the following command on your local 
+- Start Docker
+- Run the following command on your local (git bash)
 ``` 
 docker run --name melee-bets \
     -p 5432:5432 \
