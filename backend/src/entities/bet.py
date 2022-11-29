@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, Float, String, Integer
+from sqlalchemy import Column, Float, String, Integer, ForeignKey
 from .entity import Entity, Base
 from marshmallow import Schema, fields
 
@@ -10,8 +10,8 @@ class Bet(Entity, Base):
 
     odds = Column(Float)
     bet_type = Column(String)
-    tournament_id = Column(Integer)
-    matchup_id = Column(Integer)
+    tournament_id = Column(Integer, ForeignKey("tournaments.id"))
+    matchup_id = Column(Integer, ForeignKey("matchups.id"))
     status = Column(String)
     to_win = Column(Integer)
 
