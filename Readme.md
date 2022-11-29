@@ -21,7 +21,7 @@ Ensure you have python installed with pip and venv modules installed globally
 - Then go into `bin/` and run `source activate` (on macOS)
 - CD into your enviornment and run `\Scripts\activate` (on Windows
 - CD into the `backend` folder and run `pip install -r requirements.txt`
-- To run the backend run `sh test.sh` or `bash test.sh` for PowerShell
+- To run the backend run `sh test.sh`
 
 ### Angular App
 Ensure you have npm and node installed
