@@ -1,7 +1,4 @@
-import { Component } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,6 +7,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { BrowserModule } from '@angular/platform-browser';
+import { AuthService } from '@auth0/auth0-angular';
+import { Subject, takeUntil } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 
 
 @Component({
@@ -28,14 +28,30 @@ import { BrowserModule } from '@angular/platform-browser';
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css']
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnDestroy {
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
+  private destroy$: Subject<boolean> = new Subject<boolean>()
+  
+  constructor(
+    @Inject(DOCUMENT) public document: Document,
+    private _auth: AuthService
+  ) {}
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  auth$ = this._auth.isAuthenticated$
+  user$ = this._auth.user$
 
+  login(){
+    this._auth.loginWithRedirect();
+  }
+
+  logout() {
+    this._auth.logout({ 
+      returnTo: this.document.location.origin 
+    });
+  }
+
+  ngOnDestroy(): void {
+      this.destroy$.next(true)
+      this.destroy$.complete()
+  }
 }

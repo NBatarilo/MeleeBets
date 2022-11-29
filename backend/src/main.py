@@ -17,6 +17,7 @@ CORS(app)
 # if needed, generate database schema
 Base.metadata.create_all(engine)
 
+<<<<<<< HEAD
 @app.route('/<tournament_slug>/matches')
 def get_tournament_matches(tournament_slug):
     session = Session()
@@ -28,6 +29,17 @@ def get_tournament_matches(tournament_slug):
     """
     result = session.execute(query, slug = tournament_slug).fetchall() 
     #tournament_match_objects = 
+=======
+@app.route('/test')
+def get_test():
+    return jsonify('test endpoint')
+
+@app.route('/test-private')
+@requires_auth
+def get_test_private():
+    return jsonify('test endpoint behind')
+
+>>>>>>> 0600b7bcd287833a282490021df02522d1129c36
 
 @app.route('/users')
 def get_users():

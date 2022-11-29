@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { BetsModule } from './bets/bets.module';
 import { UsersModule } from './users/users.module';
-
+import { AuthModule } from '@auth0/auth0-angular';
 
 @NgModule({
   declarations: [
@@ -22,7 +22,11 @@ import { UsersModule } from './users/users.module';
     NavigationComponent,
     HttpClientModule,
     BetsModule,
-    UsersModule
+    UsersModule,
+    AuthModule.forRoot({
+      domain: 'dev-a8quaktpx2vpip8p.us.auth0.com',
+      clientId: 'JiC84wkkHrpHnH33n5qYSp5nyKxRdMQj'
+    })
   ],
   providers: [  ],
   bootstrap: [AppComponent]
