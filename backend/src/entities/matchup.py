@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
 from .entity import Entity, Base
 from marshmallow import Schema, fields
 
@@ -8,8 +8,8 @@ from marshmallow import Schema, fields
 class Matchup(Entity, Base):
     __tablename__ = 'matchups'
 
-    player_one_id = Column(Integer)
-    player_two_id = Column(Integer)
+    player_one_id = Column(Integer, ForeignKey("players.id"))
+    player_two_id = Column(Integer, ForeignKey("players.id"))
     
 
     def __init__(self, player_one_id, player_two_id, created_by, outcome):
