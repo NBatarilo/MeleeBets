@@ -14,7 +14,8 @@ Session = sessionmaker(bind=engine)
 
 Base = declarative_base()
 
-#Define base entity class for db
+#Define base entity class for db (DEPRECATED)
+"""
 class Entity():
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime)
@@ -25,11 +26,15 @@ class Entity():
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.last_updated_by = created_by
-
+"""
 #Define bets table
-class Bet(Entity, Base):
+class Bet(Base):
     __tablename__ = 'bets'
 
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    last_updated_by = Column(String)
     odds = Column(Float)
     bet_type = Column(String)
     tournament_id = Column(Integer, ForeignKey("tournaments.id"))
@@ -38,7 +43,9 @@ class Bet(Entity, Base):
     to_win = Column(Integer)
 
     def __init__(self, odds, bet_type, tournament_id, matchup_id, to_win, created_by):
-        Entity.__init__(self, created_by)
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
         self.odds = odds
         self.bet_type = bet_type
         self.tournament_id = tournament_id
