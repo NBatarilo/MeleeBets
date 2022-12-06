@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from sqlalchemy import select
-from .models import Session
-from .auth import AuthError, requires_auth
+from src.models import Session, User, UserSchema
+from src.auth import AuthError, requires_auth
+from src.main import app
 
 @app.route('/users')
 def get_users():

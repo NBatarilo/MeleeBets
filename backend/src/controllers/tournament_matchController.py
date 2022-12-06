@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from sqlalchemy import select
-from .models import Session
-from .auth import AuthError, requires_auth
+from src.models import Session, Tournament, TournamentMatch, Bet
+from src.auth import AuthError, requires_auth
+from src.main import app
 
 @app.route('/<tournament_slug>/matches')
 def get_tournament_matches(tournament_slug):
@@ -21,6 +22,7 @@ def get_tournament_matches(tournament_slug):
 #Legacy code - keeping for now for syntax. This functionality prob going to not be an endpoint
 #Is this the best way to do this? Maybe remove POST method entirely and move further to back end
 #Need to add authentication if it stays
+"""
 @app.route('/matches', methods=['POST'])
 def add_matches():
     
@@ -41,4 +43,4 @@ def add_matches():
     session.close()
     #Return first match inserted
     return jsonify(new_match), 201
-    
+"""

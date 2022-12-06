@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from marshmallow import Schema, fields
 
 # Configure and start db
@@ -27,7 +27,144 @@ class Entity():
         self.updated_at = datetime.now()
         self.last_updated_by = created_by
 """
-#Define bets table
+
+#Define users table
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    last_updated_by = Column(String)
+    name = Column(String)
+    password = Column(String)
+    email = Column(String)
+    points = Column(Integer)
+
+    def __init__(self, name, password, email, points, created_by):
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
+        self.name = name
+        self.password = password
+        self.email = email
+        self.points = points
+
+
+class UserSchema(Schema):
+    id = fields.Number()
+    name = fields.Str()
+    password = fields.Str()
+    email = fields.Str()
+    points = fields.Number()
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+    last_updated_by = fields.Str()
+
+#Define players table
+class Player(Base):
+    __tablename__ = 'players'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    last_updated_by = Column(String)
+    player_name = Column(String)
+    sponsor = Column(String)
+    region = Column(String)
+
+    matchups = relationship("Matchup", back_popuplates = "players")
+
+    def __init__(self, player_name, sponsor, region, created_by):
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
+        self.player_name = player_name
+        self.sponsor = sponsor
+        self.region = region
+
+
+class PlayerSchema(Schema):
+    id = fields.Number()
+    player_name = fields.Str()
+    sponsor = fields.Str()
+    region = fields.Str()
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+    last_updated_by = fields.Str()
+
+#Define tournaments table
+class Tournament(Base):
+    __tablename__ = 'tournaments'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    tournament_name = Column(String)
+    tournament_date_start = Column(String)
+    tournament_date_end = Column(String)
+    tournament_slug = Column(String)
+    entrants_number = Column(Integer)
+    tournament_type = Column(String)
+
+    def __init__(self, tournament_name, tournament_date_start, tournament_date_end, tournament_slug, entrants_number, tournament_type, created_by):
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
+        self.tournament_name = tournament_name
+        self.tournament_date_start = tournament_date_start
+        self.tournament_date_end = tournament_date_end
+        self.tournament_slug = tournament_slug
+        self.entrants_number = entrants_number
+        self.tournament_type = tournament_type
+
+
+class TournamentSchema(Schema):
+    id = fields.Number()
+    tournament_name = fields.Str()
+    tournament_date_start = fields.Str()
+    tournament_date_end = fields.Str()
+    tournament_slug = fields.Str()
+    entrants_number = fields.Number()
+    tournament_type = fields.Str()
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+    last_updated_by = fields.Str()
+
+
+#Define matchups table 
+class Matchup(Base):
+    __tablename__ = 'matchups'
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    last_updated_by = Column(String)
+    player_one_id = Column(Integer, ForeignKey("players.id"))
+    player_two_id = Column(Integer, ForeignKey("players.id"))
+
+    #Might need to add second declaration if this doesn't work
+    players = relationship("Player", back_popuplates = "matchup")
+    
+
+    def __init__(self, player_one_id, player_two_id, created_by):
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
+        self.player_one_id = player_one_id
+        self.player_two_id = player_two_id
+
+
+class MatchupSchema(Schema):
+    id = fields.Number()
+    player_one_id = fields.Number()
+    player_two_id = fields.Number()
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+    last_updated_by = fields.Str()
+
+
+    #Define bets table
 class Bet(Base):
     __tablename__ = 'bets'
 
@@ -64,112 +201,7 @@ class BetSchema(Schema):
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
     last_updated_by = fields.Str()
-
-#Define matchups table 
-class Matchup(Entity, Base):
-    __tablename__ = 'matchups'
-
-    player_one_id = Column(Integer, ForeignKey("players.id"))
-    player_two_id = Column(Integer, ForeignKey("players.id"))
     
-
-    def __init__(self, player_one_id, player_two_id, created_by, outcome):
-        Entity.__init__(self, created_by)
-        self.player_one_id = player_one_id
-        self.player_two_id = player_two_id
-
-
-class MatchupSchema(Schema):
-    id = fields.Number()
-    player_one_id = fields.Number()
-    player_two_id = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
-
-#Define players table
-class Player(Entity, Base):
-    __tablename__ = 'players'
-
-    player_name = Column(String)
-    sponsor = Column(String)
-    region = Column(String)
-
-    def __init__(self, player_name, sponsor, region, created_by):
-        Entity.__init__(self, created_by)
-        self.player_name = player_name
-        self.sponsor = sponsor
-        self.region = region
-
-
-class PlayerSchema(Schema):
-    id = fields.Number()
-    player_name = fields.Str()
-    sponsor = fields.Str()
-    region = fields.Str()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
-
-#Define tournaments table
-class Tournament(Entity, Base):
-    __tablename__ = 'tournaments'
-
-    tournament_name = Column(String)
-    tournament_date_start = Column(String)
-    tournament_date_end = Column(String)
-    tournament_slug = Column(String)
-    entrants_number = Column(Integer)
-    tournament_type = Column(String)
-
-    def __init__(self, tournament_name, tournament_date_start, tournament_date_end, tournament_slug, entrants_number, tournament_type, created_by):
-        Entity.__init__(self, created_by)
-        self.tournament_name = tournament_name
-        self.tournament_date_start = tournament_date_start
-        self.tournament_date_end = tournament_date_end
-        self.tournament_slug = tournament_slug
-        self.entrants_number = entrants_number
-        self.tournament_type = tournament_type
-
-
-class TournamentSchema(Schema):
-    id = fields.Number()
-    tournament_name = fields.Str()
-    tournament_date_start = fields.Str()
-    tournament_date_end = fields.Str()
-    tournament_slug = fields.Str()
-    entrants_number = fields.Number()
-    tournament_type = fields.Str()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
-
-#Define users table
-class User(Entity, Base):
-    __tablename__ = 'users'
-
-    name = Column(String)
-    password = Column(String)
-    email = Column(String)
-    points = Column(Integer)
-
-    def __init__(self, name, password, email, points, created_by):
-        Entity.__init__(self, created_by)
-        self.name = name
-        self.password = password
-        self.email = email
-        self.points = points
-
-
-class UserSchema(Schema):
-    id = fields.Number()
-    name = fields.Str()
-    password = fields.Str()
-    email = fields.Str()
-    points = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
 
 #Define tournament_matches table
 class TournamentMatch(Entity, Base):
