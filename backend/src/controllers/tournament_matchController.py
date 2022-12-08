@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from sqlalchemy import select
-from src.models import Session, Tournament, TournamentMatch, Bet
+from src.models import Session, Tournament, TournamentMatch, Bet, Matchup, Player
 from src.auth import AuthError, requires_auth
 from src.main import app
 
@@ -13,7 +13,13 @@ def get_tournament_matches(tournament_slug):
     INNER JOIN BETS AS B ON B.MATCHUP_ID = TM.MATCHUP_ID
     WHERE T.TOURNAMENT_NAME = :slug
     """
-    stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
+    #What info to grab?
+    #player_one name, player_two name, round, outcome, player sponsors 
+
+    #This is for getting all the bets for the tournament(?)
+    #stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
+    stmt = select(Tournament).join(TournamentMatch).join(Matchup).join(Player).where(Tournament.)
+    
     result = session.execute()
     #tournament_match_objects = 
 

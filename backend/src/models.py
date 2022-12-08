@@ -142,6 +142,8 @@ class Matchup(Base):
     last_updated_by = Column(String)
     player_one_id = Column(Integer, ForeignKey("players.id"))
     player_two_id = Column(Integer, ForeignKey("players.id"))
+    player_one = Player()
+    player_two = Player()
 
     #Might need to add second declaration if this doesn't work
     players = relationship("Player", back_popuplates = "matchup")
@@ -162,6 +164,8 @@ class MatchupSchema(Schema):
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
     last_updated_by = fields.Str()
+    player_one = fields.Nested(PlayerSchema)
+    player_two = fields.Nested(PlayerSchema)
 
 
     #Define bets table
@@ -178,6 +182,9 @@ class Bet(Base):
     matchup_id = Column(Integer, ForeignKey("matchups.id"))
     status = Column(String)
     to_win = Column(Integer)
+
+    tournaments = relationship("Tournament", back_populates = "bets")
+    matchups = relationship("Matchup", back_popuplates = "bets")
 
     def __init__(self, odds, bet_type, tournament_id, matchup_id, to_win, created_by):
         self.created_at = datetime.now()
@@ -204,16 +211,27 @@ class BetSchema(Schema):
     
 
 #Define tournament_matches table
-class TournamentMatch(Entity, Base):
+class TournamentMatch(Base):
     __tablename__ = 'tournament_matches'
 
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    last_updated_by = Column(String)
     tournament_id = Column(Integer, ForeignKey("tournaments.id"))
     matchup_id = Column(Integer, ForeignKey("matchups.id"))
     round = Column(String)
     outcome = Column(Integer)
+    matchup = Matchup()
+
+    tournaments = relationship("Tournament", back_populates = "tournament_matches")
+    matchups = relationship("Matchup", back_popuplates = "tournament_matches")
 
     def __init__(self, tournament_id, matchup_id, round, outcome, created_by):
-        Entity.__init__(self, created_by)
+        
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.last_updated_by = created_by
         self.tournament_id = tournament_id
         self.matchup_id = matchup_id
         self.round = round
@@ -229,6 +247,8 @@ class TournamentMatchSchema(Schema):
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
     last_updated_by = fields.Str()
+    matchup = fields.Nested(MatchupSchema)
+    
 
 #Define user_bets table
 class UserBet(Entity, Base):
