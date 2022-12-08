@@ -1,49 +1,45 @@
 from datetime import datetime
-from sqlalchemy import create_engine, Column, String, Integer, DateTime, Float, ForeignKey
+from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from marshmallow import Schema, fields
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
-# Configure and start db
-db_url = 'localhost:5432'
-db_name = 'melee-bets'
-db_user = 'postgres'
-db_password = 'secret'
-engine = create_engine(f'postgresql://{db_user}:{db_password}@{db_url}/{db_name}')
-Session = sessionmaker(bind=engine)
+#Any relationship needs a nested schema
+db = SQLAlchemy()
+ma = Marshmallow()
 
-Base = declarative_base()
 
 #Define base entity class for db (DEPRECATED)
 """
 class Entity():
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
 
     def __init__(self, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
 """
 
 #Define users table
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
-    name = Column(String)
-    password = Column(String)
-    email = Column(String)
-    points = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    name = db.Column(db.String)
+    password = db.Column(db.String)
+    email = db.Column(db.String)
+    points = db.Column(db.Integer)
 
     def __init__(self, name, password, email, points, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.name = name
         self.password = password
@@ -51,65 +47,53 @@ class User(Base):
         self.points = points
 
 
-class UserSchema(Schema):
-    id = fields.Number()
-    name = fields.Str()
-    password = fields.Str()
-    email = fields.Str()
-    points = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
 
 #Define players table
-class Player(Base):
+class Player(db.Model):
     __tablename__ = 'players'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
-    player_name = Column(String)
-    sponsor = Column(String)
-    region = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    player_name = db.Column(db.String)
+    sponsor = db.Column(db.String)
+    region = db.Column(db.String)
 
-    matchups = relationship("Matchup", back_popuplates = "players")
 
     def __init__(self, player_name, sponsor, region, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.player_name = player_name
         self.sponsor = sponsor
         self.region = region
 
 
-class PlayerSchema(Schema):
-    id = fields.Number()
-    player_name = fields.Str()
-    sponsor = fields.Str()
-    region = fields.Str()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
+class PlayerSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Player
 
 #Define tournaments table
-class Tournament(Base):
+class Tournament(db.Model):
     __tablename__ = 'tournaments'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    tournament_name = Column(String)
-    tournament_date_start = Column(String)
-    tournament_date_end = Column(String)
-    tournament_slug = Column(String)
-    entrants_number = Column(Integer)
-    tournament_type = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    tournament_name = db.Column(db.String)
+    tournament_date_start = db.Column(db.String)
+    tournament_date_end = db.Column(db.String)
+    tournament_slug = db.Column(db.String)
+    entrants_number = db.Column(db.Integer)
+    tournament_type = db.Column(db.String)
 
     def __init__(self, tournament_name, tournament_date_start, tournament_date_end, tournament_slug, entrants_number, tournament_type, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.tournament_name = tournament_name
         self.tournament_date_start = tournament_date_start
@@ -119,76 +103,61 @@ class Tournament(Base):
         self.tournament_type = tournament_type
 
 
-class TournamentSchema(Schema):
-    id = fields.Number()
-    tournament_name = fields.Str()
-    tournament_date_start = fields.Str()
-    tournament_date_end = fields.Str()
-    tournament_slug = fields.Str()
-    entrants_number = fields.Number()
-    tournament_type = fields.Str()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
+class TournamentSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Tournament
 
 
 #Define matchups table 
-class Matchup(Base):
+class Matchup(db.Model):
     __tablename__ = 'matchups'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
-    player_one_id = Column(Integer, ForeignKey("players.id"))
-    player_two_id = Column(Integer, ForeignKey("players.id"))
-    player_one = Player()
-    player_two = Player()
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    player_one_id = db.Column(db.Integer, ForeignKey("players.id"))
+    player_two_id = db.Column(db.Integer, ForeignKey("players.id"))
 
-    #Might need to add second declaration if this doesn't work
-    players = relationship("Player", back_popuplates = "matchup")
+    player_one = db.relationship("Player", foreign_keys = [player_one_id])
+    player_two = db.relationship("Player", foreign_keys = [player_two_id])
     
 
     def __init__(self, player_one_id, player_two_id, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.player_one_id = player_one_id
         self.player_two_id = player_two_id
 
 
-class MatchupSchema(Schema):
-    id = fields.Number()
-    player_one_id = fields.Number()
-    player_two_id = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
-    player_one = fields.Nested(PlayerSchema)
-    player_two = fields.Nested(PlayerSchema)
-
+class MatchupSchema(ma.SQLAlchemyAutoSchema):
+    player_one = ma.Nested(PlayerSchema)
+    player_two = ma.Nested(PlayerSchema)
+    class Meta:
+        model = Matchup
+        
 
     #Define bets table
-class Bet(Base):
+class Bet(db.Model):
     __tablename__ = 'bets'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
-    odds = Column(Float)
-    bet_type = Column(String)
-    tournament_id = Column(Integer, ForeignKey("tournaments.id"))
-    matchup_id = Column(Integer, ForeignKey("matchups.id"))
-    status = Column(String)
-    to_win = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    odds = db.Column(db.Integer)
+    bet_type = db.Column(db.String)
+    tournament_id = db.Column(db.Integer, ForeignKey("tournaments.id"))
+    matchup_id = db.Column(db.Integer, ForeignKey("matchups.id"))
+    status = db.Column(db.String)
+    to_win = db.Column(db.Integer)
 
-    tournaments = relationship("Tournament", back_populates = "bets")
-    matchups = relationship("Matchup", back_popuplates = "bets")
-
+    tournaments = db.relationship("Tournament")
+    matchups = db.relationship("Matchup")
     def __init__(self, odds, bet_type, tournament_id, matchup_id, to_win, created_by):
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.odds = odds
         self.bet_type = bet_type
@@ -197,40 +166,34 @@ class Bet(Base):
         self.status = "open"
         self.to_win = to_win
 
-class BetSchema(Schema):
-    id = fields.Number()
-    odds = fields.Float()
-    bet_type = fields.String()
-    tournament_id = fields.Number()
-    matchup_id = fields.Number()
-    status = fields.String()
-    to_win = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
+class BetSchema(ma.SQLAlchemyAutoSchema):
+    tournaments = ma.Nested(TournamentSchema)
+    matchups = ma.Nested(MatchupSchema)
+    class Meta:
+        model = Bet
     
 
+#Really need to drill down on this structure - tempted to merge this with bets table
 #Define tournament_matches table
-class TournamentMatch(Base):
+class TournamentMatch(db.Model):
     __tablename__ = 'tournament_matches'
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    last_updated_by = Column(String)
-    tournament_id = Column(Integer, ForeignKey("tournaments.id"))
-    matchup_id = Column(Integer, ForeignKey("matchups.id"))
-    round = Column(String)
-    outcome = Column(Integer)
-    matchup = Matchup()
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    tournament_id = db.Column(db.Integer, ForeignKey("tournaments.id"))
+    matchup_id = db.Column(db.Integer, ForeignKey("matchups.id"))
+    round = db.Column(db.String)
+    outcome = db.Column(db.Integer)
 
-    tournaments = relationship("Tournament", back_populates = "tournament_matches")
-    matchups = relationship("Matchup", back_popuplates = "tournament_matches")
+    tournaments = db.relationship("Tournament")
+    matchups = db.relationship("Matchup")
 
     def __init__(self, tournament_id, matchup_id, round, outcome, created_by):
         
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
         self.tournament_id = tournament_id
         self.matchup_id = matchup_id
@@ -238,31 +201,35 @@ class TournamentMatch(Base):
         self.outcome = outcome
 
 
-class TournamentMatchSchema(Schema):
-    id = fields.Number()
-    tournament_id = fields.Number()
-    matchup_id = fields.Number()
-    round = fields.Str()
-    outcome = fields.Number()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
-    matchup = fields.Nested(MatchupSchema)
+class TournamentMatchSchema(ma.SQLAlchemyAutoSchema):
+    tournaments = ma.Nested(TournamentSchema)
+    matchups = ma.Nested(MatchupSchema)
+    class Meta:
+        model = TournamentMatch
     
 
 #Define user_bets table
-class UserBet(Entity, Base):
+class UserBet(db.Model):
     __tablename__ = 'user_bets'
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    bet_id = Column(Integer, ForeignKey("bets.id"))
-    amount = Column(Float)
-    payout = Column(Float)
-    bet_result = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.String)
+    user_id = db.Column(db.Integer, ForeignKey("users.id"))
+    bet_id = db.Column(db.Integer, ForeignKey("bets.id"))
+    amount = db.Column(db.Integer)
+    payout = db.Column(db.Integer)
+    bet_result = db.Column(db.Integer)
+
+    users = db.relationship("User")
+    bets = db.relationship("Bet")
     
 
     def __init__(self, user_id, bet_id, amount, payout, created_by):
-        Entity.__init__(self, created_by)
+        self.created_at = db.DateTime.now()
+        self.updated_at = db.DateTime.now()
+        self.last_updated_by = created_by
         self.user_id = user_id
         self.bet_id = bet_id
         self.amount = amount
@@ -271,13 +238,8 @@ class UserBet(Entity, Base):
 
 
 
-class UserBetSchema(Schema):
-    id = fields.Number()
-    user_id = fields.Number()
-    bet_id = fields.Number()
-    amount = fields.Float()
-    payout = fields.Float()
-    bet_result = fields.Int()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
-    last_updated_by = fields.Str()
+class UserBetSchema(ma.SQLAlchemyAutoSchema):
+    users = ma.Nested(UserSchema)
+    bets = ma.Nested(BetSchema)
+    class Meta:
+        model = UserBet

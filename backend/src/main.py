@@ -2,20 +2,31 @@
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from .models import Session, engine, Base
+
 from sqlalchemy import select
 from .auth import AuthError, requires_auth
+from .models import db, ma
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
 
 # creating the Flask application
 app = Flask(__name__)
+#Need to figure out how to route outside of main
 app.debug = True
 CORS(app)
 
-# if needed, generate database schema
-Base.metadata.create_all(engine)
+#Configure db
+db_url = 'localhost:5432'
+db_name = 'melee-bets'
+db_user = 'postgres'
+db_password = 'secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:secret@localhost:5432/melee-bets'
+db.init_app(app)
+ma.init_app(app)
 
 if __name__ == "__main__":
     app.run()
+    db.create_all()
 
 """
 @app.route('/test')
