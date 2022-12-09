@@ -4,7 +4,7 @@ from src.models import Session, Tournament, TournamentMatch, Bet, Matchup, Playe
 from src.auth import AuthError, requires_auth
 from src.main import app, db, ma
 
-@app.route('/<tournament_slug>/matches')
+@app.route('/api/matches/<tournament_slug>', methods = ['GET'])
 def get_tournament_matches(tournament_slug):
     print(Tournament.query.all())
     query = """
@@ -22,6 +22,14 @@ def get_tournament_matches(tournament_slug):
     
     result = session.execute()
     #tournament_match_objects = 
+
+    #Look into make_response for returns 
+    #headers = {"Content-Type": "application/json"}
+    #return make_response(
+        #'Test worked!', #Can also but something like jsonify(my_dict)
+       #200,
+       # headers=headers
+    #)
 
 
 

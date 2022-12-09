@@ -16,11 +16,7 @@ app.debug = True
 CORS(app)
 
 #Configure db
-db_url = 'localhost:5432'
-db_name = 'melee-bets'
-db_user = 'postgres'
-db_password = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:secret@localhost:5432/melee-bets'
+
 db.init_app(app)
 ma.init_app(app)
 
