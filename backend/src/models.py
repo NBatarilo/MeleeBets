@@ -1,28 +1,11 @@
+from . import db, ma
 from datetime import datetime
-from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+from sqlalchemy import ForeignKey
+
+
 
 #Any relationship needs a nested schema
-db = SQLAlchemy()
-ma = Marshmallow()
 
-
-#Define base entity class for db (DEPRECATED)
-"""
-class Entity():
-    id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.String)
-
-    def __init__(self, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
-        self.last_updated_by = created_by
-"""
 
 #Define users table
 class User(db.Model):
