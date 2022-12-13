@@ -1,9 +1,36 @@
-from flask import Flask, jsonify, request
-from sqlalchemy import select
-from src.models import Session, User, UserSchema
+from flask import jsonify, request, make_response
 from src.auth import AuthError, requires_auth
-from src.main import app
 
+from flask import Blueprint
+from flask import current_app as app
+from models import db, User
+#from flask_sqlalchemy import 
+
+
+users_bp = Blueprint(
+    'users_bp', __name__
+)
+
+
+@users_bp.route('/users', methods=['GET'])
+def add_users():
+    username = request.args.get('username')
+    email = request.args.get('email')
+    password = request.args.get('password')
+
+    if username and email:
+        new_user = User(
+            username = username,
+            password = password,
+            email = email,
+            points = 0,
+            created_by="Test"
+        )
+        db.session.add(new_user)  # 
+        db.session.commit()
+        return make_response(f"New user info: {new_user}")
+
+"""
 @app.route('/users')
 def get_users():
     # fetching from the database
@@ -43,3 +70,4 @@ def handle_auth_error(ex):
     response = jsonify(ex.error)
     response.status_code = ex.status_code
     return response
+"""

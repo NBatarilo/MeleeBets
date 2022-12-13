@@ -20,13 +20,13 @@ def init_app():
 
     with app.app_context():
         # Include our Routes
-        #from .controllers import <module>
+        from .controllers import usersController
 
         #init db
         db.create_all()
 
         # Register Blueprints
-        #app.register_blueprint(controllers.<module>)
+        app.register_blueprint(controllers.users_bp)
         
         
         return app

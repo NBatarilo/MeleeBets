@@ -1,6 +1,5 @@
 from . import db, ma
 from datetime import datetime
-from sqlalchemy import ForeignKey
 
 
 
@@ -10,24 +9,31 @@ from sqlalchemy import ForeignKey
 #Define users table
 class User(db.Model):
     __tablename__ = 'users'
+    __table_args__ = (
+        db.UniqueConstraint('password', 'email'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     last_updated_by = db.Column(db.String)
-    name = db.Column(db.String)
+    username = db.Column(db.String)
     password = db.Column(db.String)
     email = db.Column(db.String)
     points = db.Column(db.Integer)
 
-    def __init__(self, name, password, email, points, created_by):
+    def __init__(self, username, password, email, points, created_by):
         self.created_at = db.DateTime.now()
         self.updated_at = db.DateTime.now()
         self.last_updated_by = created_by
-        self.name = name
+        self.username = username
         self.password = password
         self.email = email
         self.points = points
+
+    def __repr__(self):
+        return f"username:{self.username}, password:{self.password}, email:{self.email}"
+
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -99,9 +105,10 @@ class Matchup(db.Model):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     last_updated_by = db.Column(db.String)
-    player_one_id = db.Column(db.Integer, ForeignKey("players.id"))
-    player_two_id = db.Column(db.Integer, ForeignKey("players.id"))
+    player_one_id = db.Column(db.Integer, db.ForeignKey("players.id"))
+    player_two_id = db.Column(db.Integer, db.ForeignKey("players.id"))
 
+    #Mayble add back_ref argument
     player_one = db.relationship("Player", foreign_keys = [player_one_id])
     player_two = db.relationship("Player", foreign_keys = [player_two_id])
     
@@ -131,8 +138,8 @@ class Bet(db.Model):
     last_updated_by = db.Column(db.String)
     odds = db.Column(db.Integer)
     bet_type = db.Column(db.String)
-    tournament_id = db.Column(db.Integer, ForeignKey("tournaments.id"))
-    matchup_id = db.Column(db.Integer, ForeignKey("matchups.id"))
+    tournament_id = db.Column(db.Integer, db.ForeignKey("tournaments.id"))
+    matchup_id = db.Column(db.Integer, db.ForeignKey("matchups.id"))
     status = db.Column(db.String)
     to_win = db.Column(db.Integer)
 
@@ -165,8 +172,8 @@ class TournamentMatch(db.Model):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     last_updated_by = db.Column(db.String)
-    tournament_id = db.Column(db.Integer, ForeignKey("tournaments.id"))
-    matchup_id = db.Column(db.Integer, ForeignKey("matchups.id"))
+    tournament_id = db.Column(db.Integer, db.ForeignKey("tournaments.id"))
+    matchup_id = db.Column(db.Integer, db.ForeignKey("matchups.id"))
     round = db.Column(db.String)
     outcome = db.Column(db.Integer)
 
@@ -199,8 +206,8 @@ class UserBet(db.Model):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
     last_updated_by = db.Column(db.String)
-    user_id = db.Column(db.Integer, ForeignKey("users.id"))
-    bet_id = db.Column(db.Integer, ForeignKey("bets.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    bet_id = db.Column(db.Integer, db.ForeignKey("bets.id"))
     amount = db.Column(db.Integer)
     payout = db.Column(db.Integer)
     bet_result = db.Column(db.Integer)
