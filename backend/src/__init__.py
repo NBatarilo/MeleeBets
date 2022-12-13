@@ -16,7 +16,7 @@ def init_app():
     # Initialize Plugins
     db.init_app(app)
     ma.init_app(app)
-    CORS(app)
+    CORS(app) 
 
     with app.app_context():
         # Include our Routes
@@ -24,9 +24,10 @@ def init_app():
 
         #init db
         db.create_all()
+        db.session.commit()
 
         # Register Blueprints
-        app.register_blueprint(controllers.users_bp)
+        app.register_blueprint(usersController.users_bp)
         
         
         return app

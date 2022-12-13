@@ -23,8 +23,8 @@ class User(db.Model):
     points = db.Column(db.Integer)
 
     def __init__(self, username, password, email, points, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.username = username
         self.password = password
@@ -54,8 +54,8 @@ class Player(db.Model):
 
 
     def __init__(self, player_name, sponsor, region, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.player_name = player_name
         self.sponsor = sponsor
@@ -81,8 +81,8 @@ class Tournament(db.Model):
     tournament_type = db.Column(db.String)
 
     def __init__(self, tournament_name, tournament_date_start, tournament_date_end, tournament_slug, entrants_number, tournament_type, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.tournament_name = tournament_name
         self.tournament_date_start = tournament_date_start
@@ -114,8 +114,8 @@ class Matchup(db.Model):
     
 
     def __init__(self, player_one_id, player_two_id, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.player_one_id = player_one_id
         self.player_two_id = player_two_id
@@ -146,8 +146,8 @@ class Bet(db.Model):
     tournaments = db.relationship("Tournament")
     matchups = db.relationship("Matchup")
     def __init__(self, odds, bet_type, tournament_id, matchup_id, to_win, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.odds = odds
         self.bet_type = bet_type
@@ -182,8 +182,8 @@ class TournamentMatch(db.Model):
 
     def __init__(self, tournament_id, matchup_id, round, outcome, created_by):
         
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.tournament_id = tournament_id
         self.matchup_id = matchup_id
@@ -217,8 +217,8 @@ class UserBet(db.Model):
     
 
     def __init__(self, user_id, bet_id, amount, payout, created_by):
-        self.created_at = db.DateTime.now()
-        self.updated_at = db.DateTime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         self.last_updated_by = created_by
         self.user_id = user_id
         self.bet_id = bet_id

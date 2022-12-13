@@ -3,7 +3,7 @@ from src.auth import AuthError, requires_auth
 
 from flask import Blueprint
 from flask import current_app as app
-from models import db, User
+from src.models import db, User
 #from flask_sqlalchemy import 
 
 
