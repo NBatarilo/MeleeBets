@@ -21,6 +21,7 @@ def init_app():
     with app.app_context():
         # Include our Routes
         from .controllers import usersController
+        from .controllers import testsController
 
         #init db
         db.create_all()
@@ -28,6 +29,7 @@ def init_app():
 
         # Register Blueprints
         app.register_blueprint(usersController.users_bp)
+        app.register_blueprint(testsController.tests_bp)
         
         
         return app
