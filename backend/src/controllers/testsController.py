@@ -142,13 +142,69 @@ def add_users():
         tournament_date_end = tournament_date_end,
         tournament_slug = tournament_slug,
         entrants_number = entrants_number,
-        tournament_type = tournament_type
+        tournament_type = tournament_type,
+        created_by = created_by
     )
     db.session.add(new_Tournament)
 
     #Add matchup
-    
+    Matchup_dict = request.json['Matchup']
+    player_one_id = Matchup_dict['player_one_id']
+    player_two_id = Matchup_dict['player_two_id']
 
+    new_Matchup = Matchup(
+        player_one_id = player_one_id,
+        player_two_id = player_two_id,
+        created_by = created_by
+    )
+    db.session.add(new_Matchup)
+
+    #Add bet
+    Bet_dict = request.json['Bet']
+    odds = Bet_dict['odds']
+    bet_type = Bet_dict['bet_type']
+    tournament_id = Bet_dict['tournament_id']
+    matchup_id = Bet_dict['matchup_id']
+    to_win = Bet_dict['to_win']
+    new_Bet = Bet(
+        odds = odds,
+        bet_type = bet_type,
+        tournament_id = tournament_id,
+        matchup_id = matchup_id,
+        to_win = to_win,
+        created_by = created_by
+    )
+    db.session.add(new_Bet)
+
+    #Add tournamentMatch
+    TournamentMatch_dict = request.json['TournamentMatch']
+    tournament_id = TournamentMatch_dict['tournament_id']
+    matchup_id = TournamentMatch_dict['matchup_id']
+    round = TournamentMatch_dict['round']
+    outcome = TournamentMatch_dict['outcome']
+    new_TournamentMatch = TournamentMatch(
+        tournament_id = tournament_id,
+        matchup_id = matchup_id,
+        round = round,
+        outcome = outcome,
+        created_by = created_by
+    )
+    db.session.add(new_TournamentMatch)
+
+    #Add UserBet
+    UserBet_dict = request.json['UserBet']
+    user_id = UserBet_dict['user_id']
+    bet_id = UserBet_dict['bet_id']
+    amount = UserBet_dict['amount']
+    payout = UserBet_dict['payout']
+    new_UserBet = UserBet(
+        user_id = user_id,
+        bet_id = bet_id,
+        amount = amount,
+        payout = payout,
+        created_by = created_by
+    )
+    db.session.add(new_UserBet)
 
     db.session.commit()
-    return make_response(f"New db info added: {new_user, new_playerOne, new_playerTwo}")
+    return make_response(f"New db info added: {new_user}")
