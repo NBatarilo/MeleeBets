@@ -1,9 +1,113 @@
-<div>
-    <button routerLink="/new-bet">New Bet</button>
-    <h1> Test </h1>
-    <ul>
-      <li *ngFor="let bet of betsList">
-        {{bet.bettor_username}}, {{bet.amount}}
-      </li>
-    </ul>
+<div display="flex">
+
+
+<div class="tournament-container">
+  <div class="tournament-headers">
+    <h3>Round of 16</h3>
+    <h3>Quarter-Finals</h3>
+    <h3>Semi-Finals</h3>
+    <h3>Final</h3>
+    <h3>Winner</h3>
   </div>
+
+  <div class="tournament-brackets">
+    <ul class="bracket bracket-1">
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>
+            <div class="container">
+              <button mat-button class="choosen">Player 1</button>
+              <p>vs.</p>
+              <button mat-button class="unchoosen">Player 2</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+
+    </ul>  
+    <ul class="bracket bracket-2">
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+
+    </ul>  
+    <ul class="bracket bracket-3">
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+
+    </ul>  
+    <ul class="bracket bracket-4">
+      <li class="team-item">
+        <mat-card>
+          <mat-card-content>Simple card</mat-card-content>
+        </mat-card>
+      </li>
+    </ul>  
+
+    <ul class="bracket bracket-5">
+      <li class="team-item">European Champions</li>
+    </ul>  
+  </div>
+</div>
+
+</div>

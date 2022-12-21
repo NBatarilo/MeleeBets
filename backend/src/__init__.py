@@ -20,8 +20,7 @@ def init_app():
 
     with app.app_context():
         # Include our Routes
-        from .controllers import usersController
-        from .controllers import testsController
+        from .controllers import usersController, testsController
 
         #init db
         db.create_all()
