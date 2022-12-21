@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, request
-from sqlalchemy import select
-from src.models import Session, Tournament, TournamentMatch, Bet, Matchup, Player
 from src.auth import AuthError, requires_auth
-from src.main import app, db, ma
+from flask import Blueprint
+from flask import current_app as app
+from src.models import db, User, Player, Tournament, Matchup, Bet, TournamentMatch, UserBet, BetSchema
 
-@app.route('/api/matches/<tournament_slug>', methods = ['GET'])
+tournamentMatch_bp = Blueprint(
+    'tournamentMatch_bp', __name__
+)
+
+@tournamentMatch_bp.route('/api/matches/<tournament_slug>', methods = ['GET'])
 def get_tournament_matches(tournament_slug):
     print(Tournament.query.all())
     query = """
@@ -18,20 +22,34 @@ def get_tournament_matches(tournament_slug):
 
     #This is for getting all the bets for the tournament(?)
     #stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
-    stmt = select(TournamentMatch, Tournament, Matchup, Player).join(TournamentMatch.tournaments).join(TournamentMatch.matchups)\
-    .join(Matchup.player_one).join(Matchup.player_two).where(Tournament.tournament_slug == tournament_slug)
+    #stmt = select(TournamentMatch, Tournament, Matchup, Player).join(TournamentMatch.tournaments).join(TournamentMatch.matchups)\
+    #.join(Matchup.player_one).join(Matchup.player_two).where(Tournament.tournament_slug == tournament_slug)
     
-    result = session.execute()
-    #tournament_match_objects = 
 
-    #Look into make_response for returns 
-    #headers = {"Content-Type": "application/json"}
-    #return make_response(
-        #'Test worked!', #Can also but something like jsonify(my_dict)
-       #200,
-       # headers=headers
-    #)
+@tournamentMatch_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
+def query_startgg(tournament_slug):
+    #Read query into string from file
 
+    #Build json payload/request and send request, jsonify response
+    """
+    import requests
+ 
+    url = "https://httpbin.org/post"
+    
+    data = {
+        "id": 1001,
+        "name": "geek",
+        "passion": "coding",
+    }
+    headers = { “Authorization” : ”our_unique_secret_token” }
+    response = requests.post(url, json=data, headers = headers)
+    
+    print("Status Code", response.status_code)
+    print("JSON Response ", response.json())
+    """
+
+    #Iterate through data and format for entry
+    return
 
 
 #Legacy code - keeping for now for syntax. This functionality prob going to not be an endpoint

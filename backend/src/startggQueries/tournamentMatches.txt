@@ -1,0 +1,28 @@
+query EventSets {
+  event(slug: "tournament/<tournament_slug>/event/melee-singles") {
+    id
+    name
+    phases {
+      id
+    }
+    sets(
+      page: 1
+      perPage: 30
+      sortType: STANDARD
+    ) {
+      pageInfo {
+        total
+      }
+      nodes {
+        id
+        slots {
+          id
+          entrant {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

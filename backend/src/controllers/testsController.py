@@ -227,6 +227,7 @@ def get_TournamentBets(tournament_slug):
     #bet = Bet.query.first()
     #return jsonify(BetSchema().dump(bet))
 
+    #This logic works with schema
     bets = db.session.query(Bet).join(Bet.tournaments).filter(Tournament.tournament_slug == tournament_slug).all()
 
     #headers = {"Content-Type": "application/json"}
