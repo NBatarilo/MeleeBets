@@ -20,9 +20,8 @@ def init_app():
 
     with app.app_context():
         # Include our Routes
-        from .controllers import usersController
-        from .controllers import testsController
-        from .controllers import tournamentMatchController
+        from .controllers import usersController, testsController, tournamentMatchController
+    
 
         #init db
         db.create_all()
