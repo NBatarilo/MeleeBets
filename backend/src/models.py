@@ -61,6 +61,9 @@ class Player(db.Model):
         self.sponsor = sponsor
         self.region = region
 
+    def __repr__(self):
+        return f"player_name:{self.player_name}, sponsor:{self.sponsor}, region:{self.region}"
+
 
 class PlayerSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -91,6 +94,10 @@ class Tournament(db.Model):
         self.entrants_number = entrants_number
         self.tournament_type = tournament_type
 
+    def __repr__(self):
+        return f"tournament_name:{self.tournament_name}, tournament_slug:{self.tournament_slug}, tournament_type:{self.tournament_type}"
+
+
 
 class TournamentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -119,6 +126,10 @@ class Matchup(db.Model):
         self.last_updated_by = created_by
         self.player_one_id = player_one_id
         self.player_two_id = player_two_id
+
+    def __repr__(self):
+        return f"player_one_id:{self.player_one_id}, player_two_id:{self.player_two_id}"
+
 
 
 class MatchupSchema(ma.SQLAlchemyAutoSchema):
@@ -156,6 +167,10 @@ class Bet(db.Model):
         self.status = "open"
         self.to_win = to_win
 
+    def __repr__(self):
+        return f"odds:{self.odds}, bet_type:{self.bet_type}, status:{self.status}"
+
+
 class BetSchema(ma.SQLAlchemyAutoSchema):
     tournaments = ma.Nested(TournamentSchema)
     matchups = ma.Nested(MatchupSchema)
@@ -189,6 +204,10 @@ class TournamentMatch(db.Model):
         self.matchup_id = matchup_id
         self.round = round
         self.outcome = outcome
+
+    def __repr__(self):
+        return f"tournament_id:{self.tournament_id}, matchup_id:{self.matchup_id}, round:{self.round}"
+
 
 
 class TournamentMatchSchema(ma.SQLAlchemyAutoSchema):
@@ -225,6 +244,9 @@ class UserBet(db.Model):
         self.amount = amount
         self.payout = payout
         self.bet_result = -1
+
+    def __repr__(self):
+        return f"user_id:{self.user_id}, bet_id:{self.bet_id}, amount:{self.amount}"
 
 
 

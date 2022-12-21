@@ -3,7 +3,7 @@ from src.auth import AuthError, requires_auth
 
 from flask import Blueprint
 from flask import current_app as app
-from src.models import db, User, Player, Tournament, Matchup, Bet, TournamentMatch, UserBet
+from src.models import db, User, Player, Tournament, Matchup, Bet, TournamentMatch, UserBet, BetSchema
 #from flask_sqlalchemy import 
 
 
@@ -19,21 +19,21 @@ Example JSON:
         "email": "test_email",
         "points": 0,
         "created_by": "populate_db"
-    }
+    },
 
     "Player_One": {
         "player_name": "test_p1",
         "sponsor": "test_sponsor",
         "region": "NA-EAST",
         "created_by": "populate_db"
-    }
+    },
 
     "Player_Two": {
         "player_name": "test_p2",
         "sponsor": "test_sponsor",
         "region": "NA-WEST",
         "created_by": "populate_db"
-    }
+    },
 
     "Tournament": {
         "tournament_name": "Test Tournament V",
@@ -43,13 +43,13 @@ Example JSON:
         "entrants_number": 69,
         "tournament_type": "Major",
         "created_by": "populate_db"
-    }
+    },
 
     "Matchup": {
         "player_one_id": 1,
         "player_two_id": 2,
         "created_by": "populate_db"
-    }
+    },
 
     "Bet": {
         "odds": 420,
@@ -58,7 +58,7 @@ Example JSON:
         "matchup_id": 1,
         "to_win": 1,
         "created_by": "populate_db"
-    }
+    },
 
     "TournamentMatch": {
         "tournament_id": 1,
@@ -66,7 +66,7 @@ Example JSON:
         "round": "Losers Round 3",
         "outcome": 0,
         "created_by": "populate_db"
-    }
+    },
 
     "UserBet": {
         "user_id": 1,
@@ -80,14 +80,14 @@ Example JSON:
 """
 
 @tests_bp.route('/test/populate_db', methods=['POST'])
-def add_users():
+def populate_db():
     #Add user
     User_dict = request.json['User']
-    username = User_dict[username]
-    email = User_dict[email]
-    password = User_dict[password]
-    points = User_dict[points]
-    created_by = User_dict[created_by]
+    username = User_dict['username']
+    email = User_dict['email']
+    password = User_dict['password']
+    points = User_dict['points']
+    created_by = User_dict['created_by']
     new_user = User(
         username = username,
         password = password,
@@ -207,4 +207,36 @@ def add_users():
     db.session.add(new_UserBet)
 
     db.session.commit()
-    return make_response(f"New db info added: {new_user}")
+    return make_response(f"New db info added: {new_user, new_playerOne, new_playerTwo, new_Tournament, new_Matchup, new_Bet, new_TournamentMatch, new_UserBet}")
+
+@tests_bp.route('/test/get_Tournament_Bets/<tournament_slug>', methods=['GET'])
+def get_TournamentBets(tournament_slug):
+
+    #result = db.session.query(TournamentMatch, Tournament, Matchup, Player).join(TournamentMatch.tournaments).join(TournamentMatch.matchups)\
+    #.join(Matchup.player_one).join(Matchup.player_two).filter(Tournament.tournament_slug == tournament_slug)
+
+    PlayerOne = db.aliased(Player)
+    PlayerTwo = db.aliased(Player)
+    query = db.session.query(Bet, Tournament, Matchup, PlayerOne, PlayerTwo).join(Bet.tournaments).join(Bet.matchups)\
+    .join(PlayerOne, Matchup.player_one).join(PlayerTwo, Matchup.player_two).filter(Tournament.tournament_slug == tournament_slug).all()
+
+    print(query)
+    result = BetSchema().dump(query)
+    print(result)
+
+    #bet = Bet.query.first()
+    #return jsonify(BetSchema().dump(bet))
+
+    bets = db.session.query(Bet).join(Bet.tournaments).filter(Tournament.tournament_slug == tournament_slug).all()
+
+    #headers = {"Content-Type": "application/json"}
+    return make_response(
+        jsonify(BetSchema(many=True).dump(bets)),
+        200
+    )
+
+
+
+
+
+

@@ -14,11 +14,12 @@ def get_tournament_matches(tournament_slug):
     WHERE T.TOURNAMENT_NAME = :slug
     """
     #What info to grab?
-    #player_one name, player_two name, round, outcome, player sponsors 
+    #player_one name, player_two name, round, outcome, player_one sponsor, p2 sponsor
 
     #This is for getting all the bets for the tournament(?)
     #stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
-    stmt = select(Tournament).join(TournamentMatch).join(Matchup).join(Player).where(Tournament)
+    stmt = select(TournamentMatch, Tournament, Matchup, Player).join(TournamentMatch.tournaments).join(TournamentMatch.matchups)\
+    .join(Matchup.player_one).join(Matchup.player_two).where(Tournament.tournament_slug == tournament_slug)
     
     result = session.execute()
     #tournament_match_objects = 
