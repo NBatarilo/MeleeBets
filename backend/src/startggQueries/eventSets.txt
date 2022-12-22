@@ -15,12 +15,17 @@ query EventSets {
       }
       nodes {
         id
+        round
+        fullRoundText
         slots {
           id
           entrant {
             id
             name
           }
+          prereqId
+          prereqPlacement
+          prereqType
         }
       }
     }

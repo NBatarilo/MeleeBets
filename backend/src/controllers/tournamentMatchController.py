@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+import requests
+from flask import Flask, jsonify, request, make_response
 from src.auth import AuthError, requires_auth
 from flask import Blueprint
 from flask import current_app as app
@@ -10,13 +11,7 @@ tournamentMatch_bp = Blueprint(
 
 @tournamentMatch_bp.route('/api/matches/<tournament_slug>', methods = ['GET'])
 def get_tournament_matches(tournament_slug):
-    print(Tournament.query.all())
-    query = """
-    SELECT some_fields FROM TOURNAMENTS AS T
-    INNER JOIN TOURNAMENT_MATCHES AS TM ON T.ID = TM.TOURNAMENT_ID
-    INNER JOIN BETS AS B ON B.MATCHUP_ID = TM.MATCHUP_ID
-    WHERE T.TOURNAMENT_NAME = :slug
-    """
+    return
     #What info to grab?
     #player_one name, player_two name, round, outcome, player_one sponsor, p2 sponsor
 
@@ -29,24 +24,22 @@ def get_tournament_matches(tournament_slug):
 @tournamentMatch_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
     #Read query into string from file
+    with open('src/startggQueries/phaseSets.txt', 'r') as file:
+        query = file.read().replace('<tournament_slug>', tournament_slug)
 
     #Build json payload/request and send request, jsonify response
-    """
-    import requests
+    payload = {"query": query}
  
-    url = "https://httpbin.org/post"
+    url = "https://api.start.gg/gql/alpha"
     
-    data = {
-        "id": 1001,
-        "name": "geek",
-        "passion": "coding",
-    }
-    headers = { “Authorization” : ”our_unique_secret_token” }
-    response = requests.post(url, json=data, headers = headers)
+    headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
+    response = requests.post(url, json=payload, headers = headers)
     
-    print("Status Code", response.status_code)
-    print("JSON Response ", response.json())
-    """
+    
+    return make_response(
+        response.json(),
+        response.status_code
+    )
 
     #Iterate through data and format for entry
     return

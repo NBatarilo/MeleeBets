@@ -1,0 +1,9 @@
+query Phases {
+  event(slug: "tournament/<tournament_slug>/event/melee-singles") {
+    id
+    name
+    phases {
+      id
+    }
+  }
+}

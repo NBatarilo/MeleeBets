@@ -1,0 +1,31 @@
+query PhaseSets {
+  phase(id: 1246400) {
+    id
+    name
+    sets(
+      page: 1
+      perPage: 100
+      sortType: ROUND
+    ){
+      pageInfo {
+        total
+      }
+      nodes {
+        id
+        round
+        fullRoundText
+        identifier
+        slots {
+          id
+          entrant {
+            id
+            name
+          }
+          prereqId
+          prereqPlacement
+          prereqType
+        }
+      }
+    }
+  }
+}
