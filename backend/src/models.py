@@ -255,3 +255,14 @@ class UserBetSchema(ma.SQLAlchemyAutoSchema):
     bets = ma.Nested(BetSchema)
     class Meta:
         model = UserBet
+
+class SetNode():
+
+    def __init__(self, Set):
+        self.Set = Set
+        self.nextSet = None
+        self.pOneLastSet = None
+        self.pTwoLastSet = None
+
+    def add_next_set(self, Set):
+        self.nextSet
