@@ -24,6 +24,10 @@ def get_tournament_matches(tournament_slug):
 @tournamentMatch_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
     #Read query into string from file
+    #TODO: Get phase ID's first, use last one to query for sets
+    #Will be strictly getting top 8 from majors essentially. Read sets into db and query into tree for front end.
+    #Could do SetNode object that has the set + parent set and children sets in list
+    #ROUND AND IDENTIFIER WILL BE HUGE HERE. Gives us the tree structure
     with open('src/startggQueries/phaseSets.txt', 'r') as file:
         query = file.read().replace('<tournament_slug>', tournament_slug)
 
