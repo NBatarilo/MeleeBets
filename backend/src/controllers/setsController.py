@@ -3,13 +3,13 @@ from flask import Flask, jsonify, request, make_response
 from src.auth import AuthError, requires_auth
 from flask import Blueprint
 from flask import current_app as app
-from src.models import db, User, Player, Tournament, Matchup, Bet, TournamentMatch, UserBet, BetSchema
+from src.models import db, User, Player, Tournament, Bet, UserBet, BetSchema
 
-tournamentMatch_bp = Blueprint(
-    'tournamentMatch_bp', __name__
+sets_bp = Blueprint(
+    'sets_bp', __name__
 )
 
-@tournamentMatch_bp.route('/api/matches/<tournament_slug>', methods = ['GET'])
+@sets_bp.route('/api/sets/<tournament_slug>', methods = ['GET'])
 def get_tournament_matches(tournament_slug):
     return
     #What info to grab?
@@ -21,7 +21,7 @@ def get_tournament_matches(tournament_slug):
     #.join(Matchup.player_one).join(Matchup.player_two).where(Tournament.tournament_slug == tournament_slug)
     
 
-@tournamentMatch_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
+@sets_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
     #Read query into string from file
     #TODO: Get phase ID's first, use last one to query for sets
@@ -45,7 +45,7 @@ def query_startgg(tournament_slug):
         response.status_code
     )
 
-    #Iterate through data and format for entry
+    #Iterate through data and format for entry into db
     return
 
 

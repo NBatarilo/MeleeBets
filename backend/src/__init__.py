@@ -20,7 +20,7 @@ def init_app():
 
     with app.app_context():
         # Include our Routes
-        from .controllers import usersController, testsController, tournamentMatchController
+        from .controllers import usersController, testsController, setsController
     
 
         #init db
@@ -30,7 +30,7 @@ def init_app():
         # Register Blueprints
         app.register_blueprint(usersController.users_bp)
         app.register_blueprint(testsController.tests_bp)
-        app.register_blueprint(tournamentMatchController.tournamentMatch_bp)
+        app.register_blueprint(setsController.sets_bp)
         
         
         return app

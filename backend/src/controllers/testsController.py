@@ -3,7 +3,7 @@ from src.auth import AuthError, requires_auth
 
 from flask import Blueprint
 from flask import current_app as app
-from src.models import db, User, Player, Tournament, Matchup, Bet, TournamentMatch, UserBet, BetSchema
+from src.models import db, User, Player, Tournament, Bet, UserBet, BetSchema
 #from flask_sqlalchemy import 
 
 
