@@ -1,0 +1,19 @@
+query TourneyInfo($tourneySlug: String!, $eventIds: [ID]) {
+  tournament(slug: $tourneySlug) {
+    id
+    name
+    participants(query: {
+      filter: {
+        eventIds:$eventIds
+      }
+    }) {
+      pageInfo {
+        total
+      }
+    }
+  }
+},
+{
+  "tourneySlug":"<tournament_slug>"
+  "eventIds":[<event_id]
+}

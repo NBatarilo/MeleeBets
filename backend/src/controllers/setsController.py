@@ -3,38 +3,60 @@ from flask import Flask, jsonify, request, make_response
 from src.auth import AuthError, requires_auth
 from flask import Blueprint
 from flask import current_app as app
-from src.models import db, User, Player, Tournament, Bet, UserBet, BetSchema
+from src.models import db, User, Player, Set, Tournament, Bet, UserBet, BetSchema
 
 sets_bp = Blueprint(
     'sets_bp', __name__
 )
 
 @sets_bp.route('/api/sets/<tournament_slug>', methods = ['GET'])
-def get_tournament_matches(tournament_slug):
+def get_sets(tournament_slug):
     return
     #What info to grab?
     #player_one name, player_two name, round, outcome, player_one sponsor, p2 sponsor
-
-    #This is for getting all the bets for the tournament(?)
-    #stmt = select(Tournament).join(Tournament.tournamentmatches).join(TournamentMatch.bets).join(Bet.matchups)
-    #stmt = select(TournamentMatch, Tournament, Matchup, Player).join(TournamentMatch.tournaments).join(TournamentMatch.matchups)\
-    #.join(Matchup.player_one).join(Matchup.player_two).where(Tournament.tournament_slug == tournament_slug)
     
 
 @sets_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
+
+    url = "https://api.start.gg/gql/alpha"
+
+    #Add tournament to db if not present
+    #For me - I think it will be 3 queries total. Event info to get event id and phase ids. Tourney info to get
+    #touney db info. And then finally phaseSets to get all the stuff we actually want. 
+    tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
+    if tournament is None:
+        with open('src/startggQueries/eventInfo.txt', 'r') as file:
+            file_text = file.read().replace('<tournament_slug>', tournament_slug)
+            split_info = file_text.split(",\n")
+            query = split_info[0]
+            variables = split_info[1]
+        
+        payload = {"query": query, "variables": variables}
+        headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
+        response = requests.post(url, json=payload, headers = headers)
+
+        #Save event id and phase ids - then make tournament query. Phase query happens outside.
+        #Thinking of changing model to include event and phase, but I can also just query eventInfo again if this if doesn't trigger
+        
+
+        return make_response(
+        response.json(),
+        response.status_code
+    )
+
+
     #Read query into string from file
     #TODO: Get phase ID's first, use last one to query for sets
     #Will be strictly getting top 8 from majors essentially. Read sets into db and query into tree for front end.
     #Could do SetNode object that has the set + parent set and children sets in list
     #ROUND AND IDENTIFIER WILL BE HUGE HERE. Gives us the tree structure
     with open('src/startggQueries/phaseSets.txt', 'r') as file:
+        #Eventually this will use the "phases" query to get the phase ids. Rn this is for testing
         query = file.read().replace('<tournament_slug>', tournament_slug)
 
     #Build json payload/request and send request, jsonify response
     payload = {"query": query}
- 
-    url = "https://api.start.gg/gql/alpha"
     
     headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
     response = requests.post(url, json=payload, headers = headers)
@@ -44,9 +66,18 @@ def query_startgg(tournament_slug):
         response.json(),
         response.status_code
     )
+    
+    #Iterate through data and enter into db
+    phase_id = response.json()["data"]["phase"]["id"]
+    set_list = response.json()["data"]["phase"]["sets"]["nodes"]
 
-    #Iterate through data and format for entry into db
-    return
+        
+
+    #for set in set_list:
+
+
+
+    #return
 
 
 #Legacy code - keeping for now for syntax. This functionality prob going to not be an endpoint
@@ -73,4 +104,292 @@ def add_matches():
     session.close()
     #Return first match inserted
     return jsonify(new_match), 201
+"""
+
+
+"""
+Example response for phase sets
+{
+    "actionRecords": [],
+    "data": {
+        "phase": {
+            "id": 1271790,
+            "name": "Bracket",
+            "sets": {
+                "nodes": [
+                    {
+                        "fullRoundText": "Losers Final",
+                        "id": "preview_1949617_-6_0",
+                        "identifier": "K",
+                        "round": -6,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-6_0-0",
+                                "prereqId": "preview_1949617_3_0",
+                                "prereqPlacement": 2,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-6_0-1",
+                                "prereqId": "preview_1949617_-5_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Losers Semi-Final",
+                        "id": "preview_1949617_-5_0",
+                        "identifier": "J",
+                        "round": -5,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-5_0-0",
+                                "prereqId": "preview_1949617_-4_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-5_0-1",
+                                "prereqId": "preview_1949617_-4_1",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Losers Quarter-Final",
+                        "id": "preview_1949617_-4_0",
+                        "identifier": "H",
+                        "round": -4,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-4_0-0",
+                                "prereqId": "preview_1949617_2_1",
+                                "prereqPlacement": 2,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-4_0-1",
+                                "prereqId": "preview_1949617_-3_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Losers Quarter-Final",
+                        "id": "preview_1949617_-4_1",
+                        "identifier": "I",
+                        "round": -4,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-4_1-0",
+                                "prereqId": "preview_1949617_2_0",
+                                "prereqPlacement": 2,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_-4_1-1",
+                                "prereqId": "preview_1949617_-3_1",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Winners Round 1",
+                        "id": "preview_1949617_1_1",
+                        "identifier": "A",
+                        "round": 1,
+                        "slots": [
+                            {
+                                "entrant": {
+                                    "id": 11935422,
+                                    "name": "RadioNights"
+                                },
+                                "id": "preview_1949617_1_1-0",
+                                "prereqId": "22739812",
+                                "prereqPlacement": null,
+                                "prereqType": "seed"
+                            },
+                            {
+                                "entrant": {
+                                    "id": 11935501,
+                                    "name": "Kadence"
+                                },
+                                "id": "preview_1949617_1_1-1",
+                                "prereqId": "22739906",
+                                "prereqPlacement": null,
+                                "prereqType": "seed"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Winners Round 1",
+                        "id": "preview_1949617_1_3",
+                        "identifier": "B",
+                        "round": 1,
+                        "slots": [
+                            {
+                                "entrant": {
+                                    "id": 11935393,
+                                    "name": "Arpeggi"
+                                },
+                                "id": "preview_1949617_1_3-0",
+                                "prereqId": "22739783",
+                                "prereqPlacement": null,
+                                "prereqType": "seed"
+                            },
+                            {
+                                "entrant": {
+                                    "id": 11935549,
+                                    "name": "PLAY SMS | wutang36genders"
+                                },
+                                "id": "preview_1949617_1_3-1",
+                                "prereqId": "22739954",
+                                "prereqPlacement": null,
+                                "prereqType": "seed"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Winners Semi-Final",
+                        "id": "preview_1949617_2_0",
+                        "identifier": "C",
+                        "round": 2,
+                        "slots": [
+                            {
+                                "entrant": {
+                                    "id": 11935341,
+                                    "name": "Species"
+                                },
+                                "id": "preview_1949617_2_0-0",
+                                "prereqId": "preview_1949617_1_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_2_0-1",
+                                "prereqId": "preview_1949617_1_1",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Winners Semi-Final",
+                        "id": "preview_1949617_2_1",
+                        "identifier": "D",
+                        "round": 2,
+                        "slots": [
+                            {
+                                "entrant": {
+                                    "id": 11935361,
+                                    "name": "DERT | Legs"
+                                },
+                                "id": "preview_1949617_2_1-0",
+                                "prereqId": "preview_1949617_1_2",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_2_1-1",
+                                "prereqId": "preview_1949617_1_3",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Winners Final",
+                        "id": "preview_1949617_3_0",
+                        "identifier": "E",
+                        "round": 3,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_3_0-0",
+                                "prereqId": "preview_1949617_2_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_3_0-1",
+                                "prereqId": "preview_1949617_2_1",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Grand Final",
+                        "id": "preview_1949617_4_0",
+                        "identifier": "F",
+                        "round": 4,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_4_0-0",
+                                "prereqId": "preview_1949617_3_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_4_0-1",
+                                "prereqId": "preview_1949617_-6_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            }
+                        ]
+                    },
+                    {
+                        "fullRoundText": "Grand Final Reset",
+                        "id": "preview_1949617_4_1",
+                        "identifier": "G",
+                        "round": 4,
+                        "slots": [
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_4_1-0",
+                                "prereqId": "preview_1949617_4_0",
+                                "prereqPlacement": 1,
+                                "prereqType": "set"
+                            },
+                            {
+                                "entrant": null,
+                                "id": "preview_1949617_4_1-1",
+                                "prereqId": "preview_1949617_4_0",
+                                "prereqPlacement": 2,
+                                "prereqType": "set"
+                            }
+                        ]
+                    }
+                ],
+                "pageInfo": {
+                    "total": 11
+                }
+            }
+        }
+    },
+    "extensions": {
+        "cacheControl": {
+            "hints": null,
+            "version": 1
+        },
+        "queryComplexity": 56
+    }
+}
 """

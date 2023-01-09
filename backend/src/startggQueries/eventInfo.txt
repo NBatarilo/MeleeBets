@@ -1,0 +1,12 @@
+query EventInfo($eventSlug: String!) {
+  event(slug: $eventSlug) {
+    id
+    name
+    phases {
+      id
+    }
+  }
+},
+{
+  "eventSlug":"tournament/<tournament_slug>/event/melee-singles"
+}

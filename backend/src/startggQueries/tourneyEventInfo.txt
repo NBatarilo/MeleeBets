@@ -1,0 +1,19 @@
+query TourneyEventInfo($tourneySlug: String!, $eventIds: [ID]) {
+  tournament(slug: $tourneySlug) {
+    id
+    name
+    participants(query: {
+      filter: {
+        eventIds:$eventIds
+      }
+    }) {
+      pageInfo {
+        total
+      }
+    }
+  }
+},
+{
+  "tourneySlug":"the-nightclub-s5e12-os-nyc",
+  "eventIds":[1271790]
+}
