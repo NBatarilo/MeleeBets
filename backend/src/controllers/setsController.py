@@ -24,28 +24,48 @@ def query_startgg(tournament_slug):
     #Add tournament to db if not present
     #For me - I think it will be 3 queries total. Event info to get event id and phase ids. Tourney info to get
     #touney db info. And then finally phaseSets to get all the stuff we actually want. 
+
+    with open('src/startggQueries/eventInfo.txt', 'r') as file:
+        file_text = file.read().replace('<tournament_slug>', tournament_slug)
+        split_info = file_text.split(",\n")
+        query = split_info[0]
+        variables = split_info[1]
+    
+    payload = {"query": query, "variables": variables}
+    headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
+    response = requests.post(url, json=payload, headers = headers)
+    
+
+    #Save event id and phase ids - then make tournament query. Phase query happens outside.
+    #Thinking of changing model to include event and phase, but I can also just query eventInfo again if this if doesn't trigger
+    event_id = response.json()["data"]["event"]["id"]
+    phase_ids = response.json()["data"]["event"]["phases"]
+    
+    #Check if tourney exists
     tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
     if tournament is None:
-        with open('src/startggQueries/eventInfo.txt', 'r') as file:
-            file_text = file.read().replace('<tournament_slug>', tournament_slug)
+        with open('src/startggQueries/tourneyInfo.txt', 'r') as file:
+            file_text = file.read().replace('<tournament_slug>', tournament_slug).replace('<event_id>', str(event_id))
             split_info = file_text.split(",\n")
             query = split_info[0]
             variables = split_info[1]
-        
+    
         payload = {"query": query, "variables": variables}
         headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
         response = requests.post(url, json=payload, headers = headers)
-
-        #Save event id and phase ids - then make tournament query. Phase query happens outside.
-        #Thinking of changing model to include event and phase, but I can also just query eventInfo again if this if doesn't trigger
-        
-
-        return make_response(
-        response.json(),
-        response.status_code
+    
+    return make_response(
+    response.json(),
+    response.status_code
     )
 
+    #Got tourney info working! Next step is looking at docs to add other info to query. (I think date is the only thing)
+    #After that going to add phase sets query. Should also make the query code a function. "with open..."
+    
 
+
+    """
+    
     #Read query into string from file
     #TODO: Get phase ID's first, use last one to query for sets
     #Will be strictly getting top 8 from majors essentially. Read sets into db and query into tree for front end.
@@ -78,6 +98,7 @@ def query_startgg(tournament_slug):
 
 
     #return
+    """
 
 
 #Legacy code - keeping for now for syntax. This functionality prob going to not be an endpoint

@@ -14,6 +14,5 @@ query TourneyInfo($tourneySlug: String!, $eventIds: [ID]) {
   }
 },
 {
-  "tourneySlug":"<tournament_slug>"
-  "eventIds":[<event_id]
+  "tourneySlug":"<tournament_slug>", "eventIds":[<event_id>]
 }
