@@ -1,10 +1,10 @@
-query PhaseSets {
-  phase(id: 1271790) {
+query PhaseSets($phaseId: ID!, $page: Int!, $perPage: Int!) {
+  phase(id: $phaseId) {
     id
     name
     sets(
-      page: 1
-      perPage: 100
+      page: $page
+      perPage: $perPage
       sortType: ROUND
     ){
       pageInfo {
@@ -28,4 +28,7 @@ query PhaseSets {
       }
     }
   }
+},
+{
+  "phaseId": <phase_id>, "page": 1, "perPage": 100
 }

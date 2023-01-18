@@ -8,6 +8,31 @@ from src.models import db, User, Player, Set, Tournament, Bet, UserBet, BetSchem
 sets_bp = Blueprint(
     'sets_bp', __name__
 )
+#1271790 (nightclub phase_id)
+def execute_query(tournament_slug, event_id = None, phase_id = None):
+    url = "https://api.start.gg/gql/alpha"
+    if phase_id is not None:
+        with open('src/startggQueries/phaseSets.txt', 'r') as file:
+            file_text = file.read().replace('<phase_id>', phase_id)
+
+    elif event_id is not None:
+        with open('src/startggQueries/tourneyInfo.txt', 'r') as file:
+            file_text = file.read().replace('<tournament_slug>', tournament_slug).replace('<event_id>', str(event_id))
+
+    else:
+        with open('src/startggQueries/eventInfo.txt', 'r') as file:
+            file_text = file.read().replace('<tournament_slug>', tournament_slug)
+
+    split_info = file_text.split(",\n")
+    query = split_info[0]
+    variables = split_info[1]
+    
+    payload = {"query": query, "variables": variables}
+    headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
+    response = requests.post(url, json=payload, headers = headers)
+
+    return response
+        
 
 @sets_bp.route('/api/sets/<tournament_slug>', methods = ['GET'])
 def get_sets(tournament_slug):
@@ -25,43 +50,29 @@ def query_startgg(tournament_slug):
     #For me - I think it will be 3 queries total. Event info to get event id and phase ids. Tourney info to get
     #touney db info. And then finally phaseSets to get all the stuff we actually want. 
 
-    with open('src/startggQueries/eventInfo.txt', 'r') as file:
-        file_text = file.read().replace('<tournament_slug>', tournament_slug)
-        split_info = file_text.split(",\n")
-        query = split_info[0]
-        variables = split_info[1]
-    
-    payload = {"query": query, "variables": variables}
-    headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
-    response = requests.post(url, json=payload, headers = headers)
+    eventInfo_response = execute_query(tournament_slug)
     
 
     #Save event id and phase ids - then make tournament query. Phase query happens outside.
     #Thinking of changing model to include event and phase, but I can also just query eventInfo again if this if doesn't trigger
-    event_id = response.json()["data"]["event"]["id"]
-    phase_ids = response.json()["data"]["event"]["phases"]
+    event_id = eventInfo_response.json()["data"]["event"]["id"]
+    phase_ids = eventInfo_response.json()["data"]["event"]["phases"]
     
     #Check if tourney exists
     tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
     if tournament is None:
-        with open('src/startggQueries/tourneyInfo.txt', 'r') as file:
-            file_text = file.read().replace('<tournament_slug>', tournament_slug).replace('<event_id>', str(event_id))
-            split_info = file_text.split(",\n")
-            query = split_info[0]
-            variables = split_info[1]
+        tourneyInfo_response = execute_query(tournament_slug, event_id)
+        #Add logic to insert to db
     
-        payload = {"query": query, "variables": variables}
-        headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
-        response = requests.post(url, json=payload, headers = headers)
-    
-    return make_response(
-    response.json(),
-    response.status_code
-    )
 
     #Got tourney info working! Next step is looking at docs to add other info to query. (I think date is the only thing)
-    #After that going to add phase sets query. Should also make the query code a function. "with open..."
-    
+    top8_phase = phase_ids[-1]["id"]
+    phaseSets_response = execute_query(tournament_slug, event_id, top8_phase)
+
+    return make_response(
+    phaseSets_response.json(),
+    phaseSets_response.status_code
+    )
 
 
     """
