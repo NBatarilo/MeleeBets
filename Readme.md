@@ -19,9 +19,9 @@ docker run --name melee-bets \
 Ensure you have python installed with pip and venv modules installed globally
 - Create a virtual environment with `python3 -m venv [whatever your venv name]`
 - Then go into `bin/` and run `source activate` (on macOS)
-- CD into your enviornment and run `\Scripts\activate` (on Windows
+- CD into your environment and run `\Scripts\activate` (on Windows)
 - CD into the `backend` folder and run `pip install -r requirements.txt`
-- To run the backend run `sh test.sh`
+- To run the backend run `python wsgi.py` 
 
 ### Angular App
 Ensure you have npm and node installed
