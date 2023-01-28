@@ -128,6 +128,7 @@ class SetSchema(ma.SQLAlchemyAutoSchema):
 
 
 #Define tournaments table
+#TODO: Add tournemant image to this
 class Tournament(db.Model):
     __tablename__ = 'tournaments'
     __table_args__ = (

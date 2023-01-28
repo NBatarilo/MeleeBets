@@ -1,14 +1,15 @@
 import requests
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, Blueprint
 from src.auth import AuthError, requires_auth
-from flask import Blueprint
 from flask import current_app as app
-from src.models import db, User, Player, Set, Tournament, Bet, UserBet, BetSchema
+from src.models import db, User, Player, Set, Tournament, Bet, UserBet, BetSchema, TournamentSchema
+from datetime import datetime
 
 sets_bp = Blueprint(
     'sets_bp', __name__
 )
 #1271790 (nightclub phase_id)
+#Test slug: the-nightclub-s5e12-os-nyc
 def execute_query(tournament_slug, event_id = None, phase_id = None):
     url = "https://api.start.gg/gql/alpha"
     if phase_id is not None:
@@ -44,8 +45,6 @@ def get_sets(tournament_slug):
 @sets_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
 
-    url = "https://api.start.gg/gql/alpha"
-
     #Add tournament to db if not present
     #For me - I think it will be 3 queries total. Event info to get event id and phase ids. Tourney info to get
     #touney db info. And then finally phaseSets to get all the stuff we actually want. 
@@ -61,11 +60,37 @@ def query_startgg(tournament_slug):
     #Check if tourney exists
     tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
     if tournament is None:
+        #Realizing now that this should redirect to a tournamentController. TODO
         tourneyInfo_response = execute_query(tournament_slug, event_id)
         #Add logic to insert to db
-    
+        name = tourneyInfo_response.json()["data"]["tournament"]["name"]
+        start_date = datetime.fromtimestamp(tourneyInfo_response.json()["data"]["tournament"]["startAt"])
+        end_date = datetime.fromtimestamp(tourneyInfo_response.json()["data"]["tournament"]["endAt"])
+        num_entrants = tourneyInfo_response.json()["data"]["tournament"]["participants"]["pageInfo"]["total"]
+        tournament_type = "TBD"
 
-    #Got tourney info working! Next step is looking at docs to add other info to query. (I think date is the only thing)
+        new_tournament = Tournament(
+            tournament_name = name,
+            tournament_date_start = start_date,
+            tournament_date_end = end_date,
+            tournament_slug = tournament_slug,
+            entrants_number = num_entrants,
+            tournament_type = tournament_type,
+            created_by = "Test"
+        )
+
+        db.session.add(new_tournament)
+        db.session.commit()
+
+
+        return tourneyInfo_response.json()
+
+        #datetime.fromtimestamp(timestamp)
+    tournament_result = TournamentSchema().dump(tournament)
+    return jsonify(tournament_result)
+    """
+    #Finished adding tourney to and querying from db, next is adding the actual set functionality.
+    #Going to execute phaseSets using previous phase_ids. Then add Sets and Players (where applicable) 
     top8_phase = phase_ids[-1]["id"]
     phaseSets_response = execute_query(tournament_slug, event_id, top8_phase)
 
@@ -75,7 +100,7 @@ def query_startgg(tournament_slug):
     )
 
 
-    """
+    
     
     #Read query into string from file
     #TODO: Get phase ID's first, use last one to query for sets
@@ -107,7 +132,7 @@ def query_startgg(tournament_slug):
     #for set in set_list:
 
 
-
+    
     #return
     """
 

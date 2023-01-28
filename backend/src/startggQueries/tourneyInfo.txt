@@ -2,6 +2,8 @@ query TourneyInfo($tourneySlug: String!, $eventIds: [ID]) {
   tournament(slug: $tourneySlug) {
     id
     name
+    startAt
+    endAt
     participants(query: {
       filter: {
         eventIds:$eventIds
