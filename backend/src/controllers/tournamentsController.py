@@ -9,12 +9,18 @@ tournaments_bp = Blueprint(
     'tournaments_bp', __name__
 )
 
-@tournaments_bp.route('/api/tournaments/<tournament_slug>', methods = ['GET'])
-def get_tournament(tournament_slug):
-    #Probably going to make this "get_tournaments" and give a date range as input eventually
-    #Also TODO: Add post method and make this a more general tourney db interaction function. if get:, if post: 
+@tournaments_bp.route('/api/tournaments/<tournament_slug>', methods = ['GET', 'POST'])
+def tournament_db_api(tournament_slug):
+    #Probably going to make this "get_tournaments" and give a date range as input eventually  
+    if request.method == 'POST':
+        #Add db post logic here
+        return
+    else:
+        tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
+        tournament_result = TournamentSchema().dump(tournament)
+        return jsonify(tournament_result)
+    
 
-    tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
-    tournament_result = TournamentSchema().dump(tournament)
-    return jsonify(tournament_result)
+#Also TODO: Move startgg tournament db POST functionality to this controller
+#/api/tournaments/startgg/<tournament_slug>'
 
