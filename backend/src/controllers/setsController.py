@@ -14,7 +14,7 @@ def execute_query(tournament_slug, event_id = None, phase_id = None):
     url = "https://api.start.gg/gql/alpha"
     if phase_id is not None:
         with open('src/startggQueries/phaseSets.txt', 'r') as file:
-            file_text = file.read().replace('<phase_id>', phase_id)
+            file_text = file.read().replace('<phase_id>', str(phase_id))
 
     elif event_id is not None:
         with open('src/startggQueries/tourneyInfo.txt', 'r') as file:
@@ -35,14 +35,18 @@ def execute_query(tournament_slug, event_id = None, phase_id = None):
     return response
         
 
-@sets_bp.route('/api/sets/<tournament_slug>', methods = ['GET'])
-def get_sets(tournament_slug):
-    return
+@sets_bp.route('/api/sets/<tournament_slug>', methods = ['GET', 'POST'])
+def sets_db_api(tournament_slug):
+    if request.method == 'POST':
+        return
+
+    else:
+        return
     #What info to grab?
     #player_one name, player_two name, round, outcome, player_one sponsor, p2 sponsor
     
 
-@sets_bp.route('/api/startgg/<tournament_slug>', methods = ['GET'])
+@sets_bp.route('/api/sets/startgg/<tournament_slug>', methods = ['GET'])
 def query_startgg(tournament_slug):
 
     #Add tournament to db if not present
@@ -59,6 +63,8 @@ def query_startgg(tournament_slug):
     
     #Check if tourney exists
     tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
+    tournament_added = False
+
     if tournament is None:
         #Realizing now that this should redirect to a tournamentController. TODO
         tourneyInfo_response = execute_query(tournament_slug, event_id)
@@ -81,60 +87,30 @@ def query_startgg(tournament_slug):
 
         db.session.add(new_tournament)
         db.session.commit()
+        tournament_added = True
 
+    if tournament_added:
+        tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).first()
 
-        return tourneyInfo_response.json()
-
-        #datetime.fromtimestamp(timestamp)
     tournament_result = TournamentSchema().dump(tournament)
-    return jsonify(tournament_result)
-    """
+    #return jsonify(tournament_result)
+    
     #Finished adding tourney to and querying from db, next is adding the actual set functionality.
     #Going to execute phaseSets using previous phase_ids. Then add Sets and Players (where applicable) 
     top8_phase = phase_ids[-1]["id"]
-    phaseSets_response = execute_query(tournament_slug, event_id, top8_phase)
+    phaseSets_response = execute_query(tournament_slug, event_id, top8_phase)\
+    
+
+    #Eventually going to have this redirect to the sets_db_api as a post
+    
 
     return make_response(
     phaseSets_response.json(),
     phaseSets_response.status_code
     )
+    
 
 
-    
-    
-    #Read query into string from file
-    #TODO: Get phase ID's first, use last one to query for sets
-    #Will be strictly getting top 8 from majors essentially. Read sets into db and query into tree for front end.
-    #Could do SetNode object that has the set + parent set and children sets in list
-    #ROUND AND IDENTIFIER WILL BE HUGE HERE. Gives us the tree structure
-    with open('src/startggQueries/phaseSets.txt', 'r') as file:
-        #Eventually this will use the "phases" query to get the phase ids. Rn this is for testing
-        query = file.read().replace('<tournament_slug>', tournament_slug)
-
-    #Build json payload/request and send request, jsonify response
-    payload = {"query": query}
-    
-    headers = {"Authorization" : "Bearer 3b70dc3e655754d9010c3ea829e81cd8"}
-    response = requests.post(url, json=payload, headers = headers)
-    
-    
-    return make_response(
-        response.json(),
-        response.status_code
-    )
-    
-    #Iterate through data and enter into db
-    phase_id = response.json()["data"]["phase"]["id"]
-    set_list = response.json()["data"]["phase"]["sets"]["nodes"]
-
-        
-
-    #for set in set_list:
-
-
-    
-    #return
-    """
 
 
 #Legacy code - keeping for now for syntax. This functionality prob going to not be an endpoint
