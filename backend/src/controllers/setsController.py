@@ -97,12 +97,61 @@ def query_startgg(tournament_slug):
     
     #Finished adding tourney to and querying from db, next is adding the actual set functionality.
     #Going to execute phaseSets using previous phase_ids. Then add Sets and Players (where applicable) 
-    top8_phase = phase_ids[-1]["id"]
-    phaseSets_response = execute_query(tournament_slug, event_id, top8_phase)\
+    top8_phase_id = phase_ids[-1]["id"]
+    phaseSets_response = execute_query(tournament_slug, event_id, top8_phase_id)
     
 
     #Eventually going to have this redirect to the sets_db_api as a post
-    
+    set_list = phaseSets_response.json()["data"]["phase"]["sets"]["nodes"]
+
+    #json parsing into db - yuck
+    tournament_id = tournament.id
+    for set in set_list:
+        round = set["round"]
+        identifier = set["identifier"]
+        startgg_setID = set["id"]
+        
+        p1_info = set["slots"][0]
+        p1_tag = p1_info["entrant"]["name"].split(" | ")
+        p1_sponsor = p1_tag[0]
+        p1_name = p1_tag[1]
+
+        p2_info = set["slots"][1]
+        p2_tag = p2_info["entrant"]["name"].split(" | ")
+        p2_sponsor = p2_tag[0]
+        p2_name = p2_tag[1]
+
+
+        p1 = db.session.query(Player).filter(Player.player_name == p1_name).first()
+        p2 = db.session.query(Player).filter(Player.player_name == p2_name).first()
+
+
+        #Add players if not present in db
+        if p1 is None:
+            new_player_one = Player(
+                player_name = p1_name,
+                sponsor = p1_sponsor,
+                region = "TBD",
+                created_by = "Test"
+            )
+        db.session.add(new_player_one)
+
+        if p2 is None:
+            new_player_two = Player(
+                player_name = p2_name,
+                sponsor = p2_sponsor,
+                region = "TBD",
+                created_by = "Test"
+            )
+        db.session.add(new_player_two)
+        db.session.commit()
+
+        #TODO NEXT
+        #Get prereq IDs for both players
+        #Query players for IDs
+        #Create Set and add to db
+
+        
 
     return make_response(
     phaseSets_response.json(),

@@ -88,7 +88,7 @@ class Set(db.Model):
     player_two_id = db.Column(db.Integer, db.ForeignKey("players.id"))
     phase_id = db.Column(db.Integer)
     full_round_text = db.Column(db.String)
-    round = db.Column(db.String)
+    round = db.Column(db.Integer)
     outcome = db.Column(db.Integer)
     identifier = db.Column(db.String)
     startgg_setID = db.Column(db.Integer)
