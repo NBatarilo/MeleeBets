@@ -41,7 +41,10 @@ def sets_db_api(tournament_slug):
         return
 
     else:
-        return
+        #TODO: Adjust query to only get relevant columns
+        tournament = db.session.query(Tournament).filter(Tournament.tournament_slug == tournament_slug).all()
+        sets = TournamentSchema().dump(tournament)
+        return sets
     #What info to grab?
     #player_one name, player_two name, round, outcome, player_one sponsor, p2 sponsor
     
@@ -150,9 +153,30 @@ def query_startgg(tournament_slug):
         #Get prereq IDs for both players
         #Query players for IDs
         #Create Set and add to db
+        player_one_prereqID = p1_info["prereqId"]
+        player_two_prereqID = p2_info["prereqId"]
 
+        player_one_id = db.session.query(Player).filter(Player.player_name == p1_name).first().id
+        player_two_id = db.session.query(Player).filter(Player.player_name == p2_name).first().id
+
+
+        new_set = Set(
+            tournament_id = tournament_id,
+            player_one_id = player_one_id,
+            player_two_id = player_two_id,
+            phase_id = top8_phase_id,
+            round = round,
+            identifer = identifier,
+            startgg_setID = startgg_setID,
+            player_one_prereqID = player_one_prereqID,
+            player_two_prereqID = player_two_prereqID
+        )
+
+        db.session.add(new_set)
+
+    db.session.commit()
         
-
+    #Idk what to return yet, could just be status code
     return make_response(
     phaseSets_response.json(),
     phaseSets_response.status_code
