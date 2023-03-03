@@ -21,7 +21,7 @@ Ensure you have python installed with pip and venv modules installed globally
 - Then go into `bin/` and run `source activate` (on macOS)
 - CD into your environment and run `\Scripts\activate` (on Windows)
 - CD into the `backend` folder and run `pip install -r requirements.txt`
-- To run the backend run `python wsgi.py` 
+- To start the backend run `python wsgi.py` 
 
 ### Angular App
 Ensure you have npm and node installed
